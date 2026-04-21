@@ -42,6 +42,18 @@ class GlobalState {
         return this._userStatus ?? this._state.get(UserStatusKey);
     }
 
+
+    public setWorkspaceState<T>(key: string, value: T): Thenable<void> {
+        return this._state.update(key, value);
+    }
+
+    public getWorkspaceState<T>(key: string, defaultValue?: T): T | undefined {
+        if (defaultValue !== undefined) {
+            return this._state.get<T>(key, defaultValue);
+        }
+        return this._state.get<T>(key);
+    }
+
     public removeCookie(): void {
         this._state.update(CookieKey, undefined);
     }

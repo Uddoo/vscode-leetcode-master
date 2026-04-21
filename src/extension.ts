@@ -26,6 +26,9 @@ import { leetCodeSubmissionProvider } from "./webview/leetCodeSubmissionProvider
 import { markdownEngine } from "./webview/markdownEngine";
 import TrackData from "./utils/trackingUtils";
 import { globalState } from "./globalState";
+import { reviewContext } from "./review/reviewContext";
+import { reviewListProvider } from "./review/reviewListProvider";
+import { reviewStatsProvider } from "./review/reviewStatsProvider";
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     try {
@@ -40,6 +43,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
         leetCodeTreeDataProvider.initialize(context);
         globalState.initialize(context);
+        reviewContext.initialize(context);
 
         context.subscriptions.push(
             leetCodeStatusBarController,
@@ -47,6 +51,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             leetCodePreviewProvider,
             leetCodeSubmissionProvider,
             leetCodeSolutionProvider,
+            reviewListProvider,
+            reviewStatsProvider,
             leetCodeExecutor,
             markdownEngine,
             codeLensController,
@@ -97,7 +103,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             vscode.commands.registerCommand("leetcode.switchDefaultLanguage", () => switchDefaultLanguage()),
             vscode.commands.registerCommand("leetcode.addFavorite", (node: LeetCodeNode) => star.addFavorite(node)),
             vscode.commands.registerCommand("leetcode.removeFavorite", (node: LeetCodeNode) => star.removeFavorite(node)),
-            vscode.commands.registerCommand("leetcode.problems.sort", () => plugin.switchSortingStrategy())
+            vscode.commands.registerCommand("leetcode.problems.sort", () => plugin.switchSortingStrategy()),
+            vscode.commands.registerCommand("leetcode.review.showList", () => reviewListProvider.show()),
+            vscode.commands.registerCommand("leetcode.review.showStats", () => reviewStatsProvider.show())
         );
 
         await leetCodeExecutor.switchEndpoint(plugin.getLeetCodeEndpoint());

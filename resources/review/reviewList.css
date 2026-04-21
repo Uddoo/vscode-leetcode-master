@@ -1,0 +1,6 @@
+body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); }
+.container { padding: 12px; }
+.row { border-bottom: 1px solid var(--vscode-panel-border); padding: 10px 0; }
+.title { font-weight: 600; }
+.meta { opacity: 0.8; font-size: 12px; margin: 4px 0; }
+.actions button { margin-right: 6px; }

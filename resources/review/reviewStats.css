@@ -1,0 +1,6 @@
+body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); }
+.container { padding: 12px; }
+.card { margin-bottom: 12px; }
+.bar { height: 16px; background: var(--vscode-button-background); margin: 6px 0; }
+.heatmap-grid { display: grid; grid-template-columns: repeat(10, 14px); grid-gap: 4px; }
+.cell { width: 14px; height: 14px; background: rgba(127,127,127,0.2); }

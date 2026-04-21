@@ -39,7 +39,9 @@
         "onCommand:leetcode.submitSolution",
         "onCommand:leetcode.switchDefaultLanguage",
         "onCommand:leetcode.problems.sort",
-        "onView:leetCodeExplorer"
+        "onView:leetCodeExplorer",
+        "onCommand:leetcode.review.showList",
+        "onCommand:leetcode.review.showStats"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -141,6 +143,18 @@
                 "title": "Sort Problems",
                 "category": "LeetCode",
                 "icon": "$(sort-precedence)"
+            },
+            {
+                "command": "leetcode.review.showList",
+                "title": "Show Review List",
+                "category": "LeetCode",
+                "icon": "$(checklist)"
+            },
+            {
+                "command": "leetcode.review.showStats",
+                "title": "Show Review Stats",
+                "category": "LeetCode",
+                "icon": "$(graph)"
             }
         ],
         "viewsContainers": {
@@ -196,6 +210,16 @@
                     "command": "leetcode.problems.sort",
                     "when": "view == leetCodeExplorer",
                     "group": "overflow@3"
+                },
+                {
+                    "command": "leetcode.review.showList",
+                    "when": "view == leetCodeExplorer",
+                    "group": "overflow@4"
+                },
+                {
+                    "command": "leetcode.review.showStats",
+                    "when": "view == leetCodeExplorer",
+                    "group": "overflow@5"
                 }
             ],
             "view/item/context": [
