@@ -1,6 +1,6 @@
 {
     "name": "vscode-leetcode",
-    "displayName": "LeetCode",
+    "displayName": "LeetCode Master",
     "description": "Solve LeetCode problems in VS Code",
     "version": "0.18.4",
     "author": "LeetCode",
@@ -49,76 +49,76 @@
             {
                 "command": "leetcode.deleteCache",
                 "title": "Delete Cache",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.toggleLeetCodeCn",
                 "title": "Switch Endpoint",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": "$(globe)"
             },
             {
                 "command": "leetcode.signin",
                 "title": "Sign In",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": "$(sign-in)"
             },
             {
                 "command": "leetcode.signout",
                 "title": "Sign Out",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.manageSessions",
                 "title": "Manage Sessions",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.refreshExplorer",
                 "title": "Refresh",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": "$(refresh)"
             },
             {
                 "command": "leetcode.pickOne",
                 "title": "Pick One",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.showProblem",
                 "title": "Show Problem",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.previewProblem",
                 "title": "Preview Problem",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.searchProblem",
                 "title": "Search Problem",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": "$(search)"
             },
             {
                 "command": "leetcode.showSolution",
                 "title": "Show Top Voted Solution",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.testSolution",
                 "title": "Test in LeetCode",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.submitSolution",
                 "title": "Submit to LeetCode",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.addFavorite",
                 "title": "Add to Favorite List",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": {
                     "light": "resources/light/like.png",
                     "dark": "resources/dark/like.png"
@@ -127,7 +127,7 @@
             {
                 "command": "leetcode.removeFavorite",
                 "title": "Remove from Favorite List",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": {
                     "light": "resources/light/dislike.png",
                     "dark": "resources/dark/dislike.png"
@@ -136,24 +136,24 @@
             {
                 "command": "leetcode.switchDefaultLanguage",
                 "title": "Switch Default Language",
-                "category": "LeetCode"
+                "category": "LeetCode Master"
             },
             {
                 "command": "leetcode.problems.sort",
                 "title": "Sort Problems",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": "$(sort-precedence)"
             },
             {
                 "command": "leetcode.review.showList",
                 "title": "Show Review List",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": "$(checklist)"
             },
             {
                 "command": "leetcode.review.showStats",
                 "title": "Show Review Stats",
-                "category": "LeetCode",
+                "category": "LeetCode Master",
                 "icon": "$(graph)"
             }
         ],
@@ -161,7 +161,7 @@
             "activitybar": [
                 {
                     "id": "leetcode",
-                    "title": "LeetCode",
+                    "title": "LeetCode Master",
                     "icon": "resources/LeetCode.svg"
                 }
             ]
@@ -310,12 +310,12 @@
         "submenus": [
             {
                 "id": "leetcode.editorAction",
-                "label": "LeetCode"
+                "label": "LeetCode Master"
             }
         ],
         "configuration": [
             {
-                "title": "LeetCode",
+                "title": "LeetCode Master",
                 "properties": {
                     "leetcode.hideSolved": {
                         "type": "boolean",
