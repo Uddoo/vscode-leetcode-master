@@ -1,0 +1,246 @@
+:root {
+    --review-bg: var(--vscode-editor-background);
+    --review-fg: var(--vscode-editor-foreground);
+    --review-muted: var(--vscode-descriptionForeground);
+    --review-border: var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
+    --review-card: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.08));
+    --review-accent: var(--vscode-button-background);
+    --review-accent-fg: var(--vscode-button-foreground);
+    --review-danger: var(--vscode-errorForeground);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--review-fg);
+    background:
+        radial-gradient(circle at top left, rgba(64, 128, 214, 0.18), transparent 28rem),
+        var(--review-bg);
+    font-family: var(--vscode-font-family);
+}
+
+button {
+    font: inherit;
+}
+
+.review-shell {
+    width: min(1180px, calc(100vw - 40px));
+    margin: 0 auto;
+    padding: 28px 0 40px;
+}
+
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: var(--review-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1;
+}
+
+h2 {
+    margin: 0 0 8px;
+}
+
+.subtitle {
+    margin: 10px 0 0;
+    color: var(--review-muted);
+}
+
+.secondary-button,
+.rating-button {
+    border: 1px solid var(--review-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.secondary-button {
+    padding: 9px 16px;
+    color: var(--review-fg);
+    background: transparent;
+}
+
+.secondary-button:hover,
+.rating-button:hover {
+    border-color: var(--review-accent);
+    transform: translateY(-1px);
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.summary-card {
+    padding: 16px;
+    border: 1px solid var(--review-border);
+    border-radius: 18px;
+    background: var(--review-card);
+}
+
+.summary-card strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 26px;
+}
+
+.summary-card span {
+    color: var(--review-muted);
+}
+
+.table-card {
+    overflow: hidden;
+    border: 1px solid var(--review-border);
+    border-radius: 22px;
+    background: var(--review-card);
+}
+
+.review-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.review-table th,
+.review-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--review-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.review-table th {
+    color: var(--review-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.review-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.problem-title {
+    display: block;
+    font-weight: 700;
+}
+
+.problem-id {
+    display: block;
+    margin-top: 4px;
+    color: var(--review-muted);
+    font-size: 12px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag {
+    padding: 3px 8px;
+    border: 1px solid var(--review-border);
+    border-radius: 999px;
+    color: var(--review-muted);
+    font-size: 12px;
+}
+
+.date-cell.due {
+    color: var(--review-danger);
+    font-weight: 700;
+}
+
+.rating-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.rating-button {
+    padding: 6px 10px;
+    color: var(--review-fg);
+    background: transparent;
+}
+
+.rating-button.active {
+    color: var(--review-accent-fg);
+    border-color: var(--review-accent);
+    background: var(--review-accent);
+}
+
+.empty-state {
+    padding: 42px 24px;
+    text-align: center;
+}
+
+.empty-state p,
+.message {
+    color: var(--review-muted);
+}
+
+.message {
+    min-height: 20px;
+    margin-top: 14px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 780px) {
+    .hero,
+    .summary {
+        display: block;
+    }
+
+    .secondary-button {
+        margin-top: 16px;
+    }
+
+    .summary-card {
+        margin-bottom: 10px;
+    }
+
+    .review-table,
+    .review-table thead,
+    .review-table tbody,
+    .review-table th,
+    .review-table td,
+    .review-table tr {
+        display: block;
+    }
+
+    .review-table thead {
+        display: none;
+    }
+
+    .review-table tr {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--review-border);
+    }
+
+    .review-table td {
+        border-bottom: 0;
+    }
+}

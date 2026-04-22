@@ -18,6 +18,9 @@ import { leetCodeTreeItemDecorationProvider } from "./explorer/LeetCodeTreeItemD
 import { leetCodeChannel } from "./leetCodeChannel";
 import { leetCodeExecutor } from "./leetCodeExecutor";
 import { leetCodeManager } from "./leetCodeManager";
+import { reviewListProvider } from "./review/reviewListProvider";
+import { reviewStatsProvider } from "./review/reviewStatsProvider";
+import { reviewStorage } from "./review/storage";
 import { leetCodeStatusBarController } from "./statusbar/leetCodeStatusBarController";
 import { DialogType, promptForOpenOutputChannel } from "./utils/uiUtils";
 import { leetCodePreviewProvider } from "./webview/leetCodePreviewProvider";
@@ -40,6 +43,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
         leetCodeTreeDataProvider.initialize(context);
         globalState.initialize(context);
+        reviewStorage.initialize(context);
+        reviewListProvider.initialize(context);
+        reviewStatsProvider.initialize(context);
 
         context.subscriptions.push(
             leetCodeStatusBarController,
@@ -47,6 +53,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             leetCodePreviewProvider,
             leetCodeSubmissionProvider,
             leetCodeSolutionProvider,
+            reviewListProvider,
+            reviewStatsProvider,
             leetCodeExecutor,
             markdownEngine,
             codeLensController,
@@ -97,7 +105,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             vscode.commands.registerCommand("leetcode.switchDefaultLanguage", () => switchDefaultLanguage()),
             vscode.commands.registerCommand("leetcode.addFavorite", (node: LeetCodeNode) => star.addFavorite(node)),
             vscode.commands.registerCommand("leetcode.removeFavorite", (node: LeetCodeNode) => star.removeFavorite(node)),
-            vscode.commands.registerCommand("leetcode.problems.sort", () => plugin.switchSortingStrategy())
+            vscode.commands.registerCommand("leetcode.problems.sort", () => plugin.switchSortingStrategy()),
+            vscode.commands.registerCommand("leetcode.review.showList", () => reviewListProvider.show()),
+            vscode.commands.registerCommand("leetcode.review.showStats", () => reviewStatsProvider.show())
         );
 
         await leetCodeExecutor.switchEndpoint(plugin.getLeetCodeEndpoint());

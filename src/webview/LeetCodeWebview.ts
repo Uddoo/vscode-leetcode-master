@@ -1,7 +1,7 @@
 // Copyright (c) jdneo. All rights reserved.
 // Licensed under the MIT license.
 
-import { commands, ConfigurationChangeEvent, Disposable, ViewColumn, WebviewPanel, window, workspace } from "vscode";
+import { commands, ConfigurationChangeEvent, Disposable, Uri, ViewColumn, WebviewPanel, window, workspace } from "vscode";
 import { openSettingsEditor, promptHintMessage } from "../utils/uiUtils";
 import { markdownEngine } from "./markdownEngine";
 
@@ -25,7 +25,7 @@ export abstract class LeetCodeWebview implements Disposable {
                 enableCommandUris: true,
                 enableFindWidget: true,
                 retainContextWhenHidden: true,
-                localResourceRoots: markdownEngine.localResourceRoots,
+                localResourceRoots: this.getLocalResourceRoots(),
             });
             this.panel.onDidDispose(this.onDidDisposeWebview, this, this.listeners);
             this.panel.webview.onDidReceiveMessage(this.onDidReceiveMessage, this, this.listeners);
@@ -42,7 +42,9 @@ export abstract class LeetCodeWebview implements Disposable {
             }
         }
         this.panel.webview.html = this.getWebviewContent();
-        this.showMarkdownConfigHint();
+        if (this.shouldShowMarkdownConfigHint()) {
+            this.showMarkdownConfigHint();
+        }
     }
 
     protected onDidDisposeWebview(): void {
@@ -60,6 +62,14 @@ export abstract class LeetCodeWebview implements Disposable {
     }
 
     protected async onDidReceiveMessage(_message: any): Promise<void> { /* no special rule */ }
+
+    protected getLocalResourceRoots(): Uri[] {
+        return markdownEngine.localResourceRoots;
+    }
+
+    protected shouldShowMarkdownConfigHint(): boolean {
+        return true;
+    }
 
     protected abstract getWebviewOption(): ILeetCodeWebviewOption;
 

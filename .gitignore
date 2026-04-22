@@ -64,3 +64,9 @@ out
 
 # Mac
 .DS_Store
+
+# Openspec
+openspec/
+
+.github/prompts/
+.github/skills/
