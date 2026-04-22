@@ -3,10 +3,10 @@
     --review-fg: var(--vscode-editor-foreground);
     --review-muted: var(--vscode-descriptionForeground);
     --review-border: var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
-    --review-card: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.08));
     --review-accent: var(--vscode-button-background);
     --review-accent-fg: var(--vscode-button-foreground);
     --review-danger: var(--vscode-errorForeground);
+    --review-row-hover: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.12));
 }
 
 * {
@@ -16,9 +16,7 @@
 body {
     margin: 0;
     color: var(--review-fg);
-    background:
-        radial-gradient(circle at top left, rgba(64, 128, 214, 0.18), transparent 28rem),
-        var(--review-bg);
+    background: var(--review-bg);
     font-family: var(--vscode-font-family);
 }
 
@@ -67,9 +65,8 @@ h2 {
 .secondary-button,
 .rating-button {
     border: 1px solid var(--review-border);
-    border-radius: 999px;
+    border-radius: 2px;
     cursor: pointer;
-    transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
 }
 
 .secondary-button {
@@ -80,8 +77,7 @@ h2 {
 
 .secondary-button:hover,
 .rating-button:hover {
-    border-color: var(--review-accent);
-    transform: translateY(-1px);
+    background: var(--review-row-hover);
 }
 
 .summary {
@@ -92,10 +88,10 @@ h2 {
 }
 
 .summary-card {
-    padding: 16px;
+    padding: 12px 0;
     border: 1px solid var(--review-border);
-    border-radius: 18px;
-    background: var(--review-card);
+    border-width: 1px 0 0;
+    background: transparent;
 }
 
 .summary-card strong {
@@ -111,8 +107,8 @@ h2 {
 .table-card {
     overflow: hidden;
     border: 1px solid var(--review-border);
-    border-radius: 22px;
-    background: var(--review-card);
+    border-width: 1px 0 0;
+    background: transparent;
 }
 
 .review-table {
@@ -138,6 +134,10 @@ h2 {
 
 .review-table tr:last-child td {
     border-bottom: 0;
+}
+
+.review-table tbody tr:hover {
+    background: var(--review-row-hover);
 }
 
 .problem-title {
@@ -182,7 +182,7 @@ h2 {
 .tag {
     padding: 3px 8px;
     border: 1px solid var(--review-border);
-    border-radius: 999px;
+    border-radius: 2px;
     color: var(--review-muted);
     font-size: 12px;
 }

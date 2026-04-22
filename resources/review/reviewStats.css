@@ -3,9 +3,9 @@
     --stats-fg: var(--vscode-editor-foreground);
     --stats-muted: var(--vscode-descriptionForeground);
     --stats-border: var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
-    --stats-card: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.08));
     --stats-accent: var(--vscode-button-background);
     --stats-accent-fg: var(--vscode-button-foreground);
+    --stats-row-hover: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.12));
 }
 
 * {
@@ -15,9 +15,7 @@
 body {
     margin: 0;
     color: var(--stats-fg);
-    background:
-        linear-gradient(135deg, rgba(64, 128, 214, 0.16), transparent 26rem),
-        var(--stats-bg);
+    background: var(--stats-bg);
     font-family: var(--vscode-font-family);
 }
 
@@ -76,13 +74,13 @@ h2 {
     padding: 9px 16px;
     color: var(--stats-fg);
     border: 1px solid var(--stats-border);
-    border-radius: 999px;
+    border-radius: 2px;
     background: transparent;
     cursor: pointer;
 }
 
 .secondary-button:hover {
-    border-color: var(--stats-accent);
+    background: var(--stats-row-hover);
 }
 
 .summary-grid {
@@ -95,8 +93,8 @@ h2 {
 .summary-card,
 .chart-card {
     border: 1px solid var(--stats-border);
-    border-radius: 22px;
-    background: var(--stats-card);
+    border-width: 1px 0 0;
+    background: transparent;
 }
 
 .summary-card {
@@ -144,29 +142,29 @@ h2 {
     min-height: 34px;
     padding: 4px;
     border: 1px solid var(--stats-border);
-    border-radius: 10px;
+    border-radius: 2px;
     color: var(--stats-fg);
-    background: rgba(64, 128, 214, 0.08);
+    background: transparent;
 }
 
 .heat-cell.level-1 {
-    background: rgba(64, 128, 214, 0.18);
+    background: rgba(128, 128, 128, 0.10);
 }
 
 .heat-cell.level-2 {
-    background: rgba(64, 128, 214, 0.32);
+    background: rgba(128, 128, 128, 0.16);
 }
 
 .heat-cell.level-3 {
-    background: rgba(64, 128, 214, 0.46);
+    background: rgba(128, 128, 128, 0.22);
 }
 
 .heat-cell.level-4 {
-    background: rgba(64, 128, 214, 0.6);
+    background: rgba(128, 128, 128, 0.30);
 }
 
 .heat-cell.level-5 {
-    background: rgba(64, 128, 214, 0.74);
+    background: rgba(128, 128, 128, 0.38);
 }
 
 .heat-cell strong {
@@ -197,7 +195,7 @@ h2 {
 .bar-track {
     overflow: hidden;
     height: 14px;
-    border-radius: 999px;
+    border-radius: 2px;
     background: rgba(128, 128, 128, 0.18);
 }
 
