@@ -3,7 +3,11 @@
 
 import * as path from "path";
 import * as vscode from "vscode";
+import * as list from "../commands/list";
+import * as show from "../commands/show";
+import { explorerNodeManager } from "../explorer/explorerNodeManager";
 import { ILeetCodeWebviewOption, LeetCodeWebview } from "../webview/LeetCodeWebview";
+import { IProblem } from "../shared";
 import { isConfidenceRating } from "./scheduler";
 import { reviewStorage } from "./storage";
 import { ReviewProblemMetadata, ReviewRecord } from "./types";
@@ -100,12 +104,15 @@ class ReviewListProvider extends LeetCodeWebview {
                 case "review":
                     await this.updateReviewRecordFromMessage(message);
                     return;
+                case "openProblem":
+                    await this.openProblemFromMessage(message);
+                    return;
                 default:
                     return;
             }
         } catch (error) {
             const messageText: string = error && error.message ? error.message : error.toString();
-            vscode.window.showErrorMessage(`Failed to update review data: ${messageText}`);
+            vscode.window.showErrorMessage(`Failed to handle review list action: ${messageText}`);
             await this.postError(messageText);
         }
     }
@@ -127,6 +134,28 @@ class ReviewListProvider extends LeetCodeWebview {
         };
         await reviewStorage.updateReviewRecord(problemId, rating, metadata);
         await this.postRecords();
+    }
+
+    private async openProblemFromMessage(message: any): Promise<void> {
+        const problemId: string = typeof message.problemId === "string" ? message.problemId : "";
+        if (!problemId) {
+            throw new Error("Missing problem id.");
+        }
+
+        let problem: IProblem | undefined = explorerNodeManager.getNodeById(problemId);
+        if (!problem) {
+            await explorerNodeManager.refreshCache();
+            problem = explorerNodeManager.getNodeById(problemId);
+        }
+        if (!problem) {
+            const problems: IProblem[] = await list.listProblems();
+            problem = problems.find((item: IProblem) => item.id === problemId);
+        }
+        if (!problem) {
+            throw new Error(`Failed to resolve problem with id: ${problemId}.`);
+        }
+
+        await show.previewProblem(problem);
     }
 
     private async postRecords(): Promise<void> {

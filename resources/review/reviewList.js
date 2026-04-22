@@ -84,9 +84,19 @@
         const row = document.createElement("tr");
 
         const problemCell = document.createElement("td");
-        const title = document.createElement("span");
-        title.className = "problem-title";
+        const title = document.createElement("button");
+        title.type = "button";
+        title.className = "problem-title problem-title-button";
         title.textContent = record.problemTitle || `Problem ${record.problemId}`;
+        title.title = "Open problem preview";
+        title.setAttribute("aria-label", `Open problem preview for ${record.problemTitle || record.problemId}`);
+        title.addEventListener("click", function () {
+            setMessage(`Opening ${record.problemTitle || record.problemId}...`);
+            vscode.postMessage({
+                command: "openProblem",
+                problemId: record.problemId
+            });
+        });
         problemCell.appendChild(title);
 
         const id = document.createElement("span");
