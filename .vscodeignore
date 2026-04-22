@@ -5,10 +5,14 @@ test/**
 src/**
 **/*.map
 .gitignore
+_config.yml
 package-lock.json
 tsconfig.json
 tslint.json
 **/*.gif
 ACKNOWLEDGEMENTS.md
-docs
+docs/gifs/**
+docs/imgs/**
 .github
+openspec/**
+!resources/review/**

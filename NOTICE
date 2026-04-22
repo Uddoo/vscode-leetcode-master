@@ -1,0 +1,12 @@
+LeetCode Master
+Copyright (c) 2026 LeetCode Master Contributors
+
+This project is derived from the MIT-licensed vscode-leetcode project:
+https://github.com/LeetCode-OpenSource/vscode-leetcode
+
+Original notices retained from the upstream project:
+
+Copyright (c) 2020-present 力扣
+Copyright (c) 2018-2019 jdneo
+
+The extension also depends on the LeetCode CLI ecosystem through npm dependencies declared in package.json.

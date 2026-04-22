@@ -17,7 +17,7 @@ A clear and concise description of what you expected to happen.
 
 ## Extension Output
 
-Paste here the LeetCode extension log from output channel.
+Paste here the LeetCode Master or LeetCode output log from the output channel.
 
 Guidance: Press `Ctrl+Shift+U`, and toggle the channel to `LeetCode`.
 

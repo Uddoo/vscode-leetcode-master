@@ -1,164 +1,93 @@
-# LeetCode
+# LeetCode Master
 
-> Solve LeetCode problems in VS Code
+LeetCode Master is a VS Code extension for solving LeetCode problems and keeping a structured review plan inside the editor.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/resources/LeetCode.png" alt="">
-</p>
-<p align="center">
-  <a href="https://github.com/LeetCode-OpenSource/vscode-leetcode/actions?query=workflow%3ACI+branch%3Amaster">
-    <img src="https://img.shields.io/github/workflow/status/LeetCode-OpenSource/vscode-leetcode/CI/master?style=flat-square" alt="">
-  </a>
-  <a href="https://gitter.im/vscode-leetcode/Lobby">
-    <img src="https://img.shields.io/gitter/room/LeetCode-OpenSource/vscode-leetcode.svg?style=flat-square" alt="">
-  </a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=LeetCode.vscode-leetcode">
-    <img src="https://img.shields.io/visual-studio-marketplace/d/LeetCode.vscode-leetcode.svg?style=flat-square" alt="">
-  </a>
-  <a href="https://github.com/LeetCode-OpenSource/vscode-leetcode/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/LeetCode-OpenSource/vscode-leetcode.svg?style=flat-square" alt="">
-  </a>
-</p>
-
-- English Document | [中文文档](https://github.com/LeetCode-OpenSource/vscode-leetcode/blob/master/docs/README_zh-CN.md)
-
-## ❗️ Attention ❗️- Workaround to login to LeetCode endpoint
-
-> Note: If you are using `leetcode.cn`, you can just ignore this section.
-
-Recently we observed that [the extension cannot login to leetcode.com endpoint anymore](https://github.com/LeetCode-OpenSource/vscode-leetcode/issues/478). The root cause of this issue is that leetcode.com changed its login mechanism and so far there is no ideal way to fix that issue.
-
-Thanks for [@yihong0618](https://github.com/yihong0618) provided a workaround which can somehow mitigate this. Now you can simply click the `Sign In` button and then select `Third Party` login or `Cookie` login.
-
-> Note: If you want to use third-party login(**Recommended**), please make sure your account has been connected to the third-party. If you want to use `Cookie` login, click [here](https://github.com/LeetCode-OpenSource/vscode-leetcode/issues/478#issuecomment-564757098) to see the steps.
-
-## Requirements
-
-- [VS Code 1.30.1+](https://code.visualstudio.com/)
-- [Node.js 10+](https://nodejs.org)
-  > NOTE: Please make sure that `Node` is in your `PATH` environment variable. You can also use the setting `leetcode.nodePath` to specify the location of your `Node.js` executable.
-
-## Quick Start
-
-![demo](https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/gifs/demo.gif)
+It keeps the core LeetCode workflow from the original open-source extension and adds a review assistant: accepted submissions can be added to a spaced-repetition review queue, rated with confidence, scheduled for future review, and visualized with activity statistics.
 
 ## Features
 
-### Sign In/Out
+- Browse, preview, solve, test, and submit LeetCode problems from VS Code.
+- Switch between `leetcode.com` and `leetcode.cn` endpoints.
+- Prompt after an accepted submission to add the problem to your review list.
+- Rate review confidence as `Again`, `Hard`, `Good`, or `Easy`.
+- Schedule the next review with FRSR-style intervals:
+  - `Again`: tomorrow
+  - `Hard`: 3 days later
+  - `Good`: 7 days later
+  - `Easy`: 14 days later
+- Open `LeetCode Master: Show Review List` to review scheduled problems, jump to the problem preview, and update the rating.
+- Open `LeetCode Master: Show Review Stats` to inspect a 30-day heatmap, confidence distribution, and daily completion trend.
+- Configure Review List sorting and daily review target from VS Code Settings.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/sign_in.png" alt="Sign in" />
-</p>
+## Requirements
 
-- Simply click `Sign in to LeetCode` in the `LeetCode Explorer` will let you **sign in** with your LeetCode account.
+- VS Code `1.57.0` or newer.
+- Node.js available on `PATH`, or configured with `leetcode.nodePath`.
+- A LeetCode account for the selected endpoint.
 
-- You can also use the following command to sign in/out:
-  - **LeetCode: Sign in**
-  - **LeetCode: Sign out**
+## Usage
 
----
+1. Open the LeetCode Master activity bar view.
+2. Run `LeetCode Master: Sign In` and choose the endpoint you use.
+3. Open or create a solution with `Show Problem` or the `Code Now` button in a problem preview.
+4. Submit the solution with `Submit`.
+5. When the result is accepted, choose whether to add it to the review list and select a confidence rating.
+6. Use `Show Review List` for scheduled review sessions.
+7. Use `Show Review Stats` to check review activity and confidence distribution.
 
-### Switch Endpoint
+## Review Settings
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/endpoint.png" alt="Switch Endpoint" />
-</p>
+Search for `leetcode review` in VS Code Settings.
 
-- By clicking the button ![btn_endpoint](https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/btn_endpoint.png) at the **explorer's navigation bar**, you can switch between different endpoints.
+| Setting | Description | Default |
+| --- | --- | --- |
+| `leetcode.review.sortStrategy` | Controls the order of Review List records. Options: `Sort By Next Scheduled Review (ASC)`, `Sort By Next Scheduled Review (DESC)`, `Sort By Review Delayed Hours (ASC)`, `Sort By Review Delayed Hours (DESC)`. | `Sort By Next Scheduled Review (ASC)` |
+| `leetcode.review.dailyGoal` | Daily target number shown in the Review List progress summary. It does not block extra reviews. | `5` |
 
-- The supported endpoints are:
+## Core Settings
 
-  - **leetcode.com**
-  - **leetcode.cn**
+| Setting | Description | Default |
+| --- | --- | --- |
+| `leetcode.endpoint` | Active endpoint: `leetcode` or `leetcode-cn`. | `leetcode` |
+| `leetcode.defaultLanguage` | Default language used when creating problem files. | Not set |
+| `leetcode.workspaceFolder` | Workspace folder used for generated solution files. | `""` |
+| `leetcode.filePath` | Folder and filename template for generated problem files. | `${id}.${kebab-case-name}.${ext}` |
+| `leetcode.editor.shortcuts` | CodeLens shortcuts shown in solution files. | `["submit", "test"]` |
+| `leetcode.enableSideMode` | Group preview/result/solution webviews into the second editor column. | `true` |
+| `leetcode.allowReportData` | Allow anonymous usage data reporting inherited from the underlying LeetCode workflow. | `true` |
 
-  > Note: The accounts of different endpoints are **not** shared. Please make sure you are using the right endpoint. The extension will use `leetcode.com` by default.
+## Privacy And Network Access
 
----
+LeetCode Master communicates with the configured LeetCode endpoint to sign in, list problems, preview descriptions, run tests, and submit solutions.
 
-### Pick a Problem
+Review records are stored locally in VS Code `globalState`. The review data includes problem ID, title, tags, latest confidence rating, next review date, and review history. The review assistant does not upload this review data to a custom backend.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/pick_problem.png" alt="Pick a Problem" />
-</p>
+If you do not want anonymous product telemetry from the inherited LeetCode workflow, set `leetcode.allowReportData` to `false`.
 
-- Directly click on the problem or right click the problem in the `LeetCode Explorer` and select `Preview Problem` to see the problem description.
-- Select `Show Problem` to directly open the file with the problem description.
+See `PRIVACY.md` for the full privacy notes.
 
-  > Note：You can specify the path of the workspace folder to store the problem files by updating the setting `leetcode.workspaceFolder`. The default value is：**$HOME/.leetcode/**.
+## Publishing And Local Build
 
-  > You can specify whether including the problem description in comments or not by updating the setting `leetcode.showCommentDescription`.
+```bash
+npm ci
+npm run compile
+npm run lint
+npm run build
+```
 
-  > You can switch the default language by triggering the command: `LeetCode: Switch Default Language`.
+`npm run build` packages a `.vsix` with `@vscode/vsce`. To publish to the Marketplace, create a publisher, set `publisher` in `package.json` to that publisher ID, then run:
 
----
+```bash
+npx @vscode/vsce login <publisher-id>
+npx @vscode/vsce publish
+```
 
-### Editor Shortcuts
+Do not commit Personal Access Tokens.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/shortcuts.png" alt="Editor Shortcuts" />
-</p>
+## Support
 
-- The extension supports 5 editor shortcuts (aka Code Lens):
+Use the repository issue tracker configured in `package.json` for bugs and feature requests. Include VS Code version, extension version, operating system, endpoint, and relevant output logs.
 
-  - `Submit`: Submit your answer to LeetCode.
-  - `Test`: Test your answer with customized test cases.
-  - `Star/Unstar`: Star or unstar the current problem.
-  - `Solution`: Show the top voted solution for the current problem.
-  - `Description`: Show the problem description page.
+## Acknowledgements
 
-  > Note: You can customize the shortcuts using the setting: `leetcode.editor.shortcuts`. By default, only `Submit` and `Test` shortcuts are enabled.
-
----
-
-### Search problems by Keywords
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/search.png" alt="Search problems by Keywords" />
-</p>
-
-- By clicking the button ![btn_search](https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/btn_search.png) at the **explorer's navigation bar**, you can search the problems by keywords.
-
----
-
-### Manage Session
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LeetCode-OpenSource/vscode-leetcode/master/docs/imgs/session.png" alt="Manage Session" />
-</p>
-
-- To manage your LeetCode sessions, just clicking the `LeetCode: ***` at the bottom of the status bar. You can **switch** between sessions or **create**, **delete** a session.
-
-## Settings
-
-| Setting Name                      | Description                                                                                                                                                                                                                                                   | Default Value      |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `leetcode.hideSolved`             | Specify to hide the solved problems or not                                                                                                                                                                                                                    | `false`            |
-| `leetcode.defaultLanguage`        | Specify the default language used to solve the problem. Supported languages are: `bash`, `c`, `cpp`, `csharp`, `golang`, `java`, `javascript`, `kotlin`, `mysql`, `php`, `python`,`python3`,`ruby`,`rust`, `scala`, `swift`, `typescript`                     | `N/A`              |
-| `leetcode.useWsl`                 | Specify whether to use WSL or not                                                                                                                                                                                                                             | `false`            |
-| `leetcode.endpoint`               | Specify the active endpoint. Supported endpoints are: `leetcode`, `leetcode-cn`                                                                                                                                                                               | `leetcode`         |
-| `leetcode.workspaceFolder`        | Specify the path of the workspace folder to store the problem files.                                                                                                                                                                                          | `""`               |
-| `leetcode.filePath`               | Specify the relative path under the workspace and the file name to save the problem files. More details can be found [here](https://github.com/LeetCode-OpenSource/vscode-leetcode/wiki/Customize-the-Relative-Folder-and-the-File-Name-of-the-Problem-File). |                    |
-| `leetcode.enableStatusBar`        | Specify whether the LeetCode status bar will be shown or not.                                                                                                                                                                                                 | `true`             |
-| `leetcode.editor.shortcuts`       | Specify the customized shortcuts in editors. Supported values are: `submit`, `test`, `star`, `solution` and `description`.                                                                                                                                    | `["submit, test"]` |
-| `leetcode.enableSideMode`         | Specify whether `preview`, `solution` and `submission` tab should be grouped into the second editor column when solving a problem.                                                                                                                            | `true`             |
-| `leetcode.nodePath`               | Specify the `Node.js` executable path. for example, C:\Program Files\nodejs\node.exe                                                                                                                                                                          | `node`             |
-| `leetcode.showCommentDescription` | Specify whether to include the problem description in the comments                                                                                                                                                                                            | `false`            |
-| `leetcode.useEndpointTranslation` | Use endpoint's translation (if available)                                                                                                                                                                                                                     | `true`             |
-| `leetcode.colorizeProblems`       | Add difficulty badge and colorize problems files in explorer tree                                                                                                                                                                                             | `true`             |
-| `leetcode.problems.sortStrategy`  | Specify sorting strategy for problems list                                                                                                                                                                                                                    | `None`             |
-| `leetcode.allowReportData`        | Allow LeetCode to report anonymous usage data to improve the product. list                                                                                                                                                                                    | `true`             |
-
-## Want Help?
-
-When you meet any problem, you can check out the [Troubleshooting](https://github.com/LeetCode-OpenSource/vscode-leetcode/wiki/Troubleshooting) and [FAQ](https://github.com/LeetCode-OpenSource/vscode-leetcode/wiki/FAQ) first.
-
-If your problem still cannot be addressed, feel free to reach us in the [Gitter Channel](https://gitter.im/vscode-leetcode/Lobby) or [file an issue](https://github.com/LeetCode-OpenSource/vscode-leetcode/issues/new/choose).
-
-## Release Notes
-
-Refer to [CHANGELOG](https://github.com/LeetCode-OpenSource/vscode-leetcode/blob/master/CHANGELOG.md)
-
-## Acknowledgement
-
-- This extension is based on [@skygragon](https://github.com/skygragon)'s [leetcode-cli](https://github.com/skygragon/leetcode-cli) open source project.
-- Special thanks to our [contributors](https://github.com/LeetCode-OpenSource/vscode-leetcode/blob/master/ACKNOWLEDGEMENTS.md).
+LeetCode Master is based on the MIT-licensed `vscode-leetcode` project and the `leetcode-cli` ecosystem. The original copyright notices are preserved in `LICENSE`.

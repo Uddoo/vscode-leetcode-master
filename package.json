@@ -1,10 +1,10 @@
 {
-    "name": "vscode-leetcode",
+    "name": "leetcode-master",
     "displayName": "LeetCode Master",
-    "description": "Solve LeetCode problems in VS Code",
-    "version": "0.18.4",
-    "author": "LeetCode",
-    "publisher": "LeetCode",
+    "description": "Practice LeetCode in VS Code with spaced repetition, review queues, and review analytics.",
+    "version": "1.0.0",
+    "author": "Uddoo",
+    "publisher": "leetcode-master",
     "license": "MIT",
     "icon": "resources/LeetCode.png",
     "engines": {
@@ -12,19 +12,31 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/LeetCode-OpenSource/vscode-leetcode"
+        "url": "https://github.com/Uddoo/vscode-leetcode-master.git"
     },
-    "homepage": "https://github.com/LeetCode-OpenSource/vscode-leetcode/blob/master/README.md",
+    "homepage": "https://github.com/Uddoo/vscode-leetcode-master#readme",
+    "bugs": {
+        "url": "https://github.com/Uddoo/vscode-leetcode-master/issues"
+    },
     "categories": [
         "Other",
-        "Snippets"
+        "Visualization"
     ],
     "keywords": [
         "leetcode",
+        "spaced-repetition",
+        "review",
+        "frsr",
         "algorithm",
-        "interview"
+        "interview",
+        "schedule",
+        "analytics"
     ],
-    "preview": true,
+    "galleryBanner": {
+        "color": "#1f2937",
+        "theme": "dark"
+    },
+    "preview": false,
     "activationEvents": [
         "onCommand:leetcode.toggleLeetCodeCn",
         "onCommand:leetcode.signin",
@@ -758,8 +770,8 @@
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
-        "build": "vsce package",
-        "vs-publish": "vsce publish"
+        "build": "npx @vscode/vsce package",
+        "vs-publish": "npx @vscode/vsce publish"
     },
     "devDependencies": {
         "@types/fs-extra": "^9.0.11",
