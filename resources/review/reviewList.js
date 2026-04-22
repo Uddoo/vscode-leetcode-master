@@ -3,7 +3,9 @@
     const ratings = ["Again", "Hard", "Good", "Easy"];
     const state = {
         records: [],
-        now: new Date().toISOString()
+        now: new Date().toISOString(),
+        dailyGoal: 5,
+        todayCompleted: 0
     };
 
     const table = document.getElementById("reviewTable");
@@ -23,6 +25,8 @@
         if (payload.command === "records") {
             state.records = Array.isArray(payload.records) ? payload.records : [];
             state.now = payload.now || new Date().toISOString();
+            state.dailyGoal = typeof payload.dailyGoal === "number" ? payload.dailyGoal : 5;
+            state.todayCompleted = typeof payload.todayCompleted === "number" ? payload.todayCompleted : 0;
             render();
             setMessage("");
         } else if (payload.command === "error") {
@@ -49,6 +53,7 @@
 
         appendSummaryCard("Tracked", state.records.length, "problems in review list");
         appendSummaryCard("Due", dueCount, "ready for review now");
+        appendSummaryCard("Today", `${state.todayCompleted} / ${state.dailyGoal}`, "completed reviews / daily goal");
         appendSummaryCard("Reviews", historyCount, "total completed ratings");
     }
 

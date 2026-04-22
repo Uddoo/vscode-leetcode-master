@@ -724,6 +724,25 @@
                         ],
                         "description": "Sorting strategy for problems list."
                     },
+                    "leetcode.review.sortStrategy": {
+                        "type": "string",
+                        "default": "Sort By Next Scheduled Review (ASC)",
+                        "scope": "application",
+                        "enum": [
+                            "Sort By Next Scheduled Review (ASC)",
+                            "Sort By Next Scheduled Review (DESC)",
+                            "Sort By Review Delayed Hours (ASC)",
+                            "Sort By Review Delayed Hours (DESC)"
+                        ],
+                        "description": "Sorting strategy for the Review List."
+                    },
+                    "leetcode.review.dailyGoal": {
+                        "type": "integer",
+                        "default": 5,
+                        "minimum": 1,
+                        "scope": "application",
+                        "description": "Daily target number of problems to review."
+                    },
                     "leetcode.allowReportData": {
                         "type": "boolean",
                         "default": true,

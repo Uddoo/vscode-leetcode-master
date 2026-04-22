@@ -9,6 +9,7 @@ import { explorerNodeManager } from "../explorer/explorerNodeManager";
 import { ILeetCodeWebviewOption, LeetCodeWebview } from "../webview/LeetCodeWebview";
 import { IProblem } from "../shared";
 import { isConfidenceRating } from "./scheduler";
+import { getReviewDailyGoal, getTodayCompletedReviewCount, sortReviewRecords } from "./settings";
 import { reviewStorage } from "./storage";
 import { ReviewProblemMetadata, ReviewRecord } from "./types";
 import { getNonce } from "./webviewUtils";
@@ -117,6 +118,13 @@ class ReviewListProvider extends LeetCodeWebview {
         }
     }
 
+    protected async onDidChangeConfiguration(event: vscode.ConfigurationChangeEvent): Promise<void> {
+        await super.onDidChangeConfiguration(event);
+        if (this.panel && event.affectsConfiguration("leetcode.review")) {
+            await this.postRecords();
+        }
+    }
+
     private async updateReviewRecordFromMessage(message: any): Promise<void> {
         const problemId: string = typeof message.problemId === "string" ? message.problemId : "";
         const rating: string = typeof message.rating === "string" ? message.rating : "";
@@ -162,10 +170,14 @@ class ReviewListProvider extends LeetCodeWebview {
         if (!this.panel) {
             return;
         }
+        const now: Date = new Date();
+        const records: ReviewRecord[] = reviewStorage.getAllReviewRecords();
         await this.panel.webview.postMessage({
             command: "records",
-            records: reviewStorage.getAllReviewRecords(),
-            now: new Date().toISOString(),
+            records: sortReviewRecords(records, now),
+            now: now.toISOString(),
+            dailyGoal: getReviewDailyGoal(),
+            todayCompleted: getTodayCompletedReviewCount(records, now),
         });
     }
 

@@ -21,10 +21,7 @@ class ReviewStorage {
         const records: ReviewRecordMap = this.getRecordMap();
         return Object.keys(records)
             .map((problemId: string) => records[problemId])
-            .filter((record: ReviewRecord | undefined): record is ReviewRecord => !!record)
-            .sort((a: ReviewRecord, b: ReviewRecord) => {
-                return new Date(a.nextReviewDate).getTime() - new Date(b.nextReviewDate).getTime();
-            });
+            .filter((record: ReviewRecord | undefined): record is ReviewRecord => !!record);
     }
 
     public getReviewRecord(problemId: string): ReviewRecord | undefined {
