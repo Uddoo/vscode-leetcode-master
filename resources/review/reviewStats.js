@@ -53,6 +53,7 @@
 
     function renderHeatmap(days) {
         heatmap.textContent = "";
+        const footer = getHeatmapFooter();
         const maxCount = Math.max(1, ...days.map(function (day) { return day.count || 0; }));
         days.forEach(function (day) {
             const cell = document.createElement("div");
@@ -60,17 +61,26 @@
             const level = Math.ceil(((day.count || 0) / maxCount) * 5);
             cell.classList.add(`level-${level}`);
             cell.title = `${day.date}: ${day.count || 0} review(s)`;
+            cell.setAttribute("aria-label", `${day.date}: ${day.count || 0} review(s)`);
 
             const count = document.createElement("strong");
             count.textContent = String(day.count || 0);
             cell.appendChild(count);
 
-            const label = document.createElement("span");
-            label.textContent = compactDate(day.date);
-            cell.appendChild(label);
-
             heatmap.appendChild(cell);
         });
+        footer.textContent = days.length ? `${compactDate(days[0].date)} - ${compactDate(days[days.length - 1].date)} · hover for exact date` : "No review activity yet";
+    }
+
+    function getHeatmapFooter() {
+        let footer = document.getElementById("heatmapFooter");
+        if (!footer) {
+            footer = document.createElement("div");
+            footer.id = "heatmapFooter";
+            footer.className = "heatmap-footer";
+            heatmap.parentNode.insertBefore(footer, heatmap.nextSibling);
+        }
+        return footer;
     }
 
     function renderRatingBars(distribution) {
