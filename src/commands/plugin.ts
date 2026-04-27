@@ -4,7 +4,7 @@
 import * as vscode from "vscode";
 import { leetCodeTreeDataProvider } from "../explorer/LeetCodeTreeDataProvider";
 import { leetCodeExecutor } from "../leetCodeExecutor";
-import { IQuickItemEx } from "../shared";
+import { extensionSettingsSection, IQuickItemEx } from "../shared";
 import { Endpoint, SortingStrategy } from "../shared";
 import { DialogType, promptForOpenOutputChannel, promptForSignIn } from "../utils/uiUtils";
 import { deleteCache } from "./cache";
@@ -30,7 +30,7 @@ export async function switchEndpoint(): Promise<void> {
     if (!choice || choice.value === getLeetCodeEndpoint()) {
         return;
     }
-    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
     try {
         const endpoint: string = choice.value;
         await leetCodeExecutor.switchEndpoint(endpoint);
@@ -41,7 +41,7 @@ export async function switchEndpoint(): Promise<void> {
     }
 
     try {
-        await vscode.commands.executeCommand("leetcode.signout");
+        await vscode.commands.executeCommand("leetcodeMaster.signout");
         await deleteCache();
         await promptForSignIn();
     } catch (error) {
@@ -50,7 +50,7 @@ export async function switchEndpoint(): Promise<void> {
 }
 
 export function getLeetCodeEndpoint(): string {
-    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
     return leetCodeConfig.get<string>("endpoint", Endpoint.LeetCode);
 }
 
@@ -77,12 +77,12 @@ export async function switchSortingStrategy(): Promise<void> {
         return;
     }
 
-    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
     await leetCodeConfig.update("problems.sortStrategy", choice.value, true);
     await leetCodeTreeDataProvider.refresh();
 }
 
 export function getSortingStrategy(): SortingStrategy {
-    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
     return leetCodeConfig.get<SortingStrategy>("problems.sortStrategy", SortingStrategy.None);
 }

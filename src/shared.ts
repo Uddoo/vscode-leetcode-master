@@ -112,7 +112,13 @@ export enum DescriptionConfiguration {
     None = "None",
 }
 
-export const leetcodeHasInited: string = "leetcode.hasInited";
+export const extensionSettingsSection: string = "leetcodeMaster";
+export const legacyExtensionSettingsSection: string = "leetcode";
+export const extensionCommandPrefix: string = "leetcodeMaster";
+export const extensionTreeViewId: string = "leetcodeMasterExplorer";
+export const extensionUriScheme: string = "leetcode-master";
+export const leetcodeHasInited: string = "leetcodeMaster.hasInited";
+export const legacyLeetcodeHasInited: string = "leetcode.hasInited";
 
 export enum SortingStrategy {
     None = "None",
@@ -126,6 +132,16 @@ export const PREMIUM_URL_CN = "https://leetcode.cn/premium-payment/?source=vscod
 export const PREMIUM_URL_GLOBAL = "https://leetcode.com/subscribe/?ref=lp_pl&source=vscode";
 
 const protocol = vscode.env.appName.includes('Insiders') ? "vscode-insiders" : "vscode"
+let authCallbackExtensionId: string = "leetcode-master.leetcode-master";
+
+export function initializeExtensionIdentity(context: vscode.ExtensionContext): void {
+    authCallbackExtensionId = context.extension.id;
+}
+
+export function getAuthLoginUrl(endpoint: string): string {
+    const baseUrl: string = endpoint === Endpoint.LeetCodeCN ? urlsCn.base : urls.base;
+    return `${baseUrl}/authorize-login/${protocol}/?path=${authCallbackExtensionId}`;
+}
 
 export const urls = {
     // base urls
@@ -133,7 +149,6 @@ export const urls = {
     graphql: "https://leetcode.com/graphql",
     userGraphql: "https://leetcode.com/graphql",
     login: "https://leetcode.com/accounts/login/",
-    authLoginUrl: `https://leetcode.com/authorize-login/${protocol}/?path=leetcode.vscode-leetcode`,
 };
 
 export const urlsCn = {
@@ -142,11 +157,10 @@ export const urlsCn = {
     graphql: "https://leetcode.cn/graphql",
     userGraphql: "https://leetcode.cn/graphql/",
     login: "https://leetcode.cn/accounts/login/",
-    authLoginUrl: `https://leetcode.cn/authorize-login/${protocol}/?path=leetcode.vscode-leetcode`,
 };
 
 export const getUrl = (key: string) => {
-    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
     const point = leetCodeConfig.get<string>("endpoint", Endpoint.LeetCode);
     switch (point) {
         case Endpoint.LeetCodeCN:

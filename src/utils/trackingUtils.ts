@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import axios from "axios";
 import { getLeetCodeEndpoint } from "../commands/plugin";
-import { Endpoint } from "../shared";
+import { Endpoint, extensionSettingsSection } from "../shared";
 import { leetCodeManager } from "../leetCodeManager";
 
 const getTimeZone = (): string => {
@@ -68,7 +68,7 @@ function getRandomString(len: number) {
 }
 
 function getAllowReportDataConfig() {
-    const leetCodeConfig = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig = vscode.workspace.getConfiguration(extensionSettingsSection);
     const allowReportData = !!leetCodeConfig.get<boolean>("allowReportData");
     return allowReportData;
 }

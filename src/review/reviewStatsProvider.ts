@@ -9,7 +9,7 @@ import { reviewStorage } from "./storage";
 import { getNonce } from "./webviewUtils";
 
 class ReviewStatsProvider extends LeetCodeWebview {
-    protected readonly viewType: string = "leetcode.reviewStats";
+    protected readonly viewType: string = "leetcodeMaster.reviewStats";
     private context: vscode.ExtensionContext | undefined;
 
     public initialize(context: vscode.ExtensionContext): void {

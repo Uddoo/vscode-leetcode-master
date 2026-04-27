@@ -74,7 +74,7 @@ export function getTodayCompletedReviewCount(records: ReviewRecord[], now: Date 
 }
 
 function getReviewConfiguration(): vscode.WorkspaceConfiguration {
-    return vscode.workspace.getConfiguration("leetcode.review");
+    return vscode.workspace.getConfiguration("leetcodeMaster.review");
 }
 
 function getReviewDelayedHours(record: ReviewRecord, now: Date): number {

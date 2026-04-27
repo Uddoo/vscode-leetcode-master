@@ -15,7 +15,7 @@ import { ReviewProblemMetadata, ReviewRecord } from "./types";
 import { getNonce } from "./webviewUtils";
 
 class ReviewListProvider extends LeetCodeWebview {
-    protected readonly viewType: string = "leetcode.reviewList";
+    protected readonly viewType: string = "leetcodeMaster.reviewList";
     private context: vscode.ExtensionContext | undefined;
 
     public initialize(context: vscode.ExtensionContext): void {
@@ -120,7 +120,7 @@ class ReviewListProvider extends LeetCodeWebview {
 
     protected async onDidChangeConfiguration(event: vscode.ConfigurationChangeEvent): Promise<void> {
         await super.onDidChangeConfiguration(event);
-        if (this.panel && event.affectsConfiguration("leetcode.review")) {
+        if (this.panel && event.affectsConfiguration("leetcodeMaster.review")) {
             await this.postRecords();
         }
     }

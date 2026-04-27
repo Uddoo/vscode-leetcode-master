@@ -3,8 +3,11 @@
 
 import * as vscode from "vscode";
 
-const CookieKey = "leetcode-cookie";
-const UserStatusKey = "leetcode-user-status";
+const CookieKey = "leetcodeMaster.cookie";
+const UserStatusKey = "leetcodeMaster.userStatus";
+const LegacyCookieKey = "leetcode-cookie";
+const LegacyUserStatusKey = "leetcode-user-status";
+const GlobalStateMigrationKey = "leetcodeMaster.globalStateMigrated.v1";
 
 export type UserDataType = {
     isSignedIn: boolean;
@@ -20,9 +23,10 @@ class GlobalState {
     private _cookie: string;
     private _userStatus: UserDataType;
 
-    public initialize(context: vscode.ExtensionContext): void {
+    public async initialize(context: vscode.ExtensionContext): Promise<void> {
         this.context = context;
         this._state = this.context.globalState;
+        await this.migrateLegacyState();
     }
 
     public setCookie(cookie: string): any {
@@ -49,6 +53,24 @@ class GlobalState {
     public removeAll(): void {
         this._state.update(CookieKey, undefined);
         this._state.update(UserStatusKey, undefined);
+    }
+
+    private async migrateLegacyState(): Promise<void> {
+        if (this._state.get<boolean>(GlobalStateMigrationKey)) {
+            return;
+        }
+
+        const legacyCookie: string | undefined = this._state.get<string>(LegacyCookieKey);
+        if (this._state.get<string>(CookieKey) === undefined && legacyCookie !== undefined) {
+            await this._state.update(CookieKey, legacyCookie);
+        }
+
+        const legacyUserStatus: UserDataType | undefined = this._state.get<UserDataType>(LegacyUserStatusKey);
+        if (this._state.get<UserDataType>(UserStatusKey) === undefined && legacyUserStatus !== undefined) {
+            await this._state.update(UserStatusKey, legacyUserStatus);
+        }
+
+        await this._state.update(GlobalStateMigrationKey, true);
     }
 }
 

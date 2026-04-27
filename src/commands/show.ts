@@ -10,7 +10,7 @@ import { LeetCodeNode } from "../explorer/LeetCodeNode";
 import { leetCodeChannel } from "../leetCodeChannel";
 import { leetCodeExecutor } from "../leetCodeExecutor";
 import { leetCodeManager } from "../leetCodeManager";
-import { Endpoint, IProblem, IQuickItemEx, languages, PREMIUM_URL_CN, PREMIUM_URL_GLOBAL, ProblemState } from "../shared";
+import { Endpoint, extensionSettingsSection, IProblem, IQuickItemEx, languages, PREMIUM_URL_CN, PREMIUM_URL_GLOBAL, ProblemState } from "../shared";
 import { genFileExt, genFileName, getNodeIdFromFile } from "../utils/problemUtils";
 import * as settingUtils from "../utils/settingUtils";
 import { IDescriptionConfiguration } from "../utils/settingUtils";
@@ -125,7 +125,7 @@ export async function showSolution(input: LeetCodeNode | vscode.Uri): Promise<vo
 }
 
 async function fetchProblemLanguage(): Promise<string | undefined> {
-    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
     let defaultLanguage: string | undefined = leetCodeConfig.get<string>("defaultLanguage");
     if (defaultLanguage && languages.indexOf(defaultLanguage) < 0) {
         defaultLanguage = undefined;
@@ -162,7 +162,7 @@ async function showProblemInternal(node: IProblem): Promise<void> {
             return;
         }
 
-        const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+        const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
         const workspaceFolder: string = await selectWorkspaceFolder();
         if (!workspaceFolder) {
             return;
@@ -198,9 +198,9 @@ async function showProblemInternal(node: IProblem): Promise<void> {
             }),
             promptHintMessage(
                 "hint.commentDescription",
-                'You can config how to show the problem description through "leetcode.showDescription".',
+                'You can config how to show the problem description through "leetcodeMaster.showDescription".',
                 "Open settings",
-                (): Promise<any> => openSettingsEditor("leetcode.showDescription")
+                (): Promise<any> => openSettingsEditor("leetcodeMaster.showDescription")
             ),
         ];
         if (descriptionConfig.showInWebview) {
@@ -214,7 +214,7 @@ async function showProblemInternal(node: IProblem): Promise<void> {
 }
 
 async function showDescriptionView(node: IProblem): Promise<void> {
-    return previewProblem(node, vscode.workspace.getConfiguration("leetcode").get<boolean>("enableSideMode", true));
+    return previewProblem(node, vscode.workspace.getConfiguration(extensionSettingsSection).get<boolean>("enableSideMode", true));
 }
 async function parseProblemsToPicks(p: Promise<IProblem[]>): Promise<Array<IQuickItemEx<IProblem>>> {
     return new Promise(async (resolve: (res: Array<IQuickItemEx<IProblem>>) => void): Promise<void> => {

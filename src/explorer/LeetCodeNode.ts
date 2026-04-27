@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { Command, Uri } from "vscode";
-import { IProblem, ProblemState } from "../shared";
+import { extensionCommandPrefix, extensionUriScheme, IProblem, ProblemState } from "../shared";
 
 export class LeetCodeNode {
 
@@ -50,7 +50,7 @@ export class LeetCodeNode {
     public get previewCommand(): Command {
         return {
             title: "Preview Problem",
-            command: "leetcode.previewProblem",
+            command: `${extensionCommandPrefix}.previewProblem`,
             arguments: [this],
         };
     }
@@ -61,7 +61,7 @@ export class LeetCodeNode {
 
     public get uri(): Uri {
         return Uri.from({
-            scheme: "leetcode",
+            scheme: extensionUriScheme,
             authority: this.isProblem ? "problems" : "tree-node",
             path: `/${this.id}`, // path must begin with slash /
             query: `difficulty=${this.difficulty}`,

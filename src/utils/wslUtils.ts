@@ -2,11 +2,12 @@
 // Licensed under the MIT license.
 
 import * as vscode from "vscode";
+import { extensionSettingsSection } from "../shared";
 import { executeCommand } from "./cpUtils";
 import { isWindows } from "./osUtils";
 
 export function useWsl(): boolean {
-    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("leetcode");
+    const leetCodeConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(extensionSettingsSection);
     return isWindows() && leetCodeConfig.get<boolean>("useWsl") === true;
 }
 

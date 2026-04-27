@@ -2,10 +2,10 @@
 // Licensed under the MIT license.
 
 import { workspace, WorkspaceConfiguration } from "vscode";
-import { DescriptionConfiguration } from "../shared";
+import { DescriptionConfiguration, extensionSettingsSection } from "../shared";
 
 export function getWorkspaceConfiguration(): WorkspaceConfiguration {
-    return workspace.getConfiguration("leetcode");
+    return workspace.getConfiguration(extensionSettingsSection);
 }
 
 export function shouldHideSolvedProblem(): boolean {

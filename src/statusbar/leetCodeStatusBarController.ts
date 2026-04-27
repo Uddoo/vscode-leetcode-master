@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { ConfigurationChangeEvent, Disposable, workspace, WorkspaceConfiguration } from "vscode";
-import { UserStatus } from "../shared";
+import { extensionSettingsSection, UserStatus } from "../shared";
 import { LeetCodeStatusBarItem } from "./LeetCodeStatusBarItem";
 
 class LeetCodeStatusBarController implements Disposable {
@@ -14,7 +14,7 @@ class LeetCodeStatusBarController implements Disposable {
         this.setStatusBarVisibility();
 
         this.configurationChangeListener = workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {
-            if (event.affectsConfiguration("leetcode.enableStatusBar")) {
+            if (event.affectsConfiguration(`${extensionSettingsSection}.enableStatusBar`)) {
                 this.setStatusBarVisibility();
             }
         }, this);
@@ -39,7 +39,7 @@ class LeetCodeStatusBarController implements Disposable {
 
     private isStatusBarEnabled(): boolean {
         const configuration: WorkspaceConfiguration = workspace.getConfiguration();
-        return configuration.get<boolean>("leetcode.enableStatusBar", true);
+        return configuration.get<boolean>(`${extensionSettingsSection}.enableStatusBar`, true);
     }
 }
 

@@ -1,5 +1,6 @@
 import { URLSearchParams } from "url";
 import { FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri, workspace, WorkspaceConfiguration } from "vscode";
+import { extensionSettingsSection, extensionUriScheme } from "../shared";
 
 export class LeetCodeTreeItemDecorationProvider implements FileDecorationProvider {
     private readonly DIFFICULTY_BADGE_LABEL: { [key: string]: string } = {
@@ -19,7 +20,7 @@ export class LeetCodeTreeItemDecorationProvider implements FileDecorationProvide
             return;
         }
 
-        if (uri.scheme !== "leetcode" && uri.authority !== "problems") {
+        if (uri.scheme !== extensionUriScheme || uri.authority !== "problems") {
             return;
         }
 
@@ -33,7 +34,7 @@ export class LeetCodeTreeItemDecorationProvider implements FileDecorationProvide
 
     private isDifficultyBadgeEnabled(): boolean {
         const configuration: WorkspaceConfiguration = workspace.getConfiguration();
-        return configuration.get<boolean>("leetcode.colorizeProblems", false);
+        return configuration.get<boolean>(`${extensionSettingsSection}.colorizeProblems`, false);
     }
 }
 

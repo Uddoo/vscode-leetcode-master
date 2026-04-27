@@ -6,15 +6,18 @@ import { leetCodeChannel } from "../leetCodeChannel";
 import { calculateNextReviewDate, isConfidenceRating } from "./scheduler";
 import { ReviewProblemMetadata, ReviewRecord } from "./types";
 
-const ReviewRecordsKey: string = "leetcode-review-records-v1";
+const ReviewRecordsKey: string = "leetcodeMaster.reviewRecords.v1";
+const LegacyReviewRecordsKey: string = "leetcode-review-records-v1";
+const ReviewRecordsMigrationKey: string = "leetcodeMaster.reviewRecordsMigrated.v1";
 
 type ReviewRecordMap = { [problemId: string]: ReviewRecord };
 
 class ReviewStorage {
     private state: vscode.Memento | undefined;
 
-    public initialize(context: vscode.ExtensionContext): void {
+    public async initialize(context: vscode.ExtensionContext): Promise<void> {
         this.state = context.globalState;
+        await this.migrateLegacyReviewRecords();
     }
 
     public getAllReviewRecords(): ReviewRecord[] {
@@ -122,6 +125,21 @@ class ReviewStorage {
             throw new Error("Review storage has not been initialized.");
         }
         return this.state;
+    }
+
+    private async migrateLegacyReviewRecords(): Promise<void> {
+        const state: vscode.Memento = this.getState();
+        if (state.get<boolean>(ReviewRecordsMigrationKey)) {
+            return;
+        }
+
+        const legacyRecords: ReviewRecordMap | undefined = state.get<ReviewRecordMap>(LegacyReviewRecordsKey);
+        const currentRecords: ReviewRecordMap | undefined = state.get<ReviewRecordMap>(ReviewRecordsKey);
+        if (currentRecords === undefined && legacyRecords !== undefined) {
+            await state.update(ReviewRecordsKey, legacyRecords);
+        }
+
+        await state.update(ReviewRecordsMigrationKey, true);
     }
 }
 

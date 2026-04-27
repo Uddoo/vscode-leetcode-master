@@ -2,14 +2,14 @@
 // Licensed under the MIT license.
 
 import * as vscode from "vscode";
-import { UserStatus } from "../shared";
+import { extensionCommandPrefix, UserStatus } from "../shared";
 
 export class LeetCodeStatusBarItem implements vscode.Disposable {
     private readonly statusBarItem: vscode.StatusBarItem;
 
     constructor() {
         this.statusBarItem = vscode.window.createStatusBarItem();
-        this.statusBarItem.command = "leetcode.manageSessions";
+        this.statusBarItem.command = `${extensionCommandPrefix}.manageSessions`;
     }
 
     public updateStatusBar(status: UserStatus, user?: string): void {

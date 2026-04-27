@@ -26,7 +26,7 @@ The extension connects to the selected LeetCode endpoint for the inherited codin
 - Submit solutions.
 - Fetch submissions and solutions when requested.
 
-Network behavior depends on whether `leetcode.endpoint` is set to `leetcode` or `leetcode-cn`.
+Network behavior depends on whether `leetcodeMaster.endpoint` is set to `leetcode` or `leetcode-cn`. LeetCode Master uses `leetcodeMaster.*` settings and state keys so it can coexist with the original LeetCode extension.
 
 ## Telemetry
 
@@ -34,7 +34,7 @@ The underlying LeetCode workflow includes an anonymous usage reporting setting. 
 
 ```json
 {
-  "leetcode.allowReportData": false
+  "leetcodeMaster.allowReportData": false
 }
 ```
 

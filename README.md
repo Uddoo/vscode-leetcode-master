@@ -22,7 +22,7 @@ It keeps the core LeetCode workflow from the original open-source extension and 
 ## Requirements
 
 - VS Code `1.57.0` or newer.
-- Node.js available on `PATH`, or configured with `leetcode.nodePath`.
+- Node.js available on `PATH`, or configured with `leetcodeMaster.nodePath`.
 - A LeetCode account for the selected endpoint.
 
 ## Usage
@@ -37,24 +37,25 @@ It keeps the core LeetCode workflow from the original open-source extension and 
 
 ## Review Settings
 
-Search for `leetcode review` in VS Code Settings.
+Search for `leetcodeMaster review` in VS Code Settings.
+LeetCode Master uses the `leetcodeMaster.*` settings namespace so it can coexist with the original LeetCode extension.
 
 | Setting | Description | Default |
 | --- | --- | --- |
-| `leetcode.review.sortStrategy` | Controls the order of Review List records. Options: `Sort By Next Scheduled Review (ASC)`, `Sort By Next Scheduled Review (DESC)`, `Sort By Review Delayed Hours (ASC)`, `Sort By Review Delayed Hours (DESC)`. | `Sort By Next Scheduled Review (ASC)` |
-| `leetcode.review.dailyGoal` | Daily target number shown in the Review List progress summary. It does not block extra reviews. | `5` |
+| `leetcodeMaster.review.sortStrategy` | Controls the order of Review List records. Options: `Sort By Next Scheduled Review (ASC)`, `Sort By Next Scheduled Review (DESC)`, `Sort By Review Delayed Hours (ASC)`, `Sort By Review Delayed Hours (DESC)`. | `Sort By Next Scheduled Review (ASC)` |
+| `leetcodeMaster.review.dailyGoal` | Daily target number shown in the Review List progress summary. It does not block extra reviews. | `5` |
 
 ## Core Settings
 
 | Setting | Description | Default |
 | --- | --- | --- |
-| `leetcode.endpoint` | Active endpoint: `leetcode` or `leetcode-cn`. | `leetcode` |
-| `leetcode.defaultLanguage` | Default language used when creating problem files. | Not set |
-| `leetcode.workspaceFolder` | Workspace folder used for generated solution files. | `""` |
-| `leetcode.filePath` | Folder and filename template for generated problem files. | `${id}.${kebab-case-name}.${ext}` |
-| `leetcode.editor.shortcuts` | CodeLens shortcuts shown in solution files. | `["submit", "test"]` |
-| `leetcode.enableSideMode` | Group preview/result/solution webviews into the second editor column. | `true` |
-| `leetcode.allowReportData` | Allow anonymous usage data reporting inherited from the underlying LeetCode workflow. | `true` |
+| `leetcodeMaster.endpoint` | Active endpoint: `leetcode` or `leetcode-cn`. | `leetcode` |
+| `leetcodeMaster.defaultLanguage` | Default language used when creating problem files. | Not set |
+| `leetcodeMaster.workspaceFolder` | Workspace folder used for generated solution files. | `""` |
+| `leetcodeMaster.filePath` | Folder and filename template for generated problem files. | `${id}.${kebab-case-name}.${ext}` |
+| `leetcodeMaster.editor.shortcuts` | CodeLens shortcuts shown in solution files. | `["submit", "test"]` |
+| `leetcodeMaster.enableSideMode` | Group preview/result/solution webviews into the second editor column. | `true` |
+| `leetcodeMaster.allowReportData` | Allow anonymous usage data reporting inherited from the underlying LeetCode workflow. | `true` |
 
 ## Privacy And Network Access
 
@@ -62,7 +63,7 @@ LeetCode Master communicates with the configured LeetCode endpoint to sign in, l
 
 Review records are stored locally in VS Code `globalState`. The review data includes problem ID, title, tags, latest confidence rating, next review date, and review history. The review assistant does not upload this review data to a custom backend.
 
-If you do not want anonymous product telemetry from the inherited LeetCode workflow, set `leetcode.allowReportData` to `false`.
+If you do not want anonymous product telemetry from the inherited LeetCode workflow, set `leetcodeMaster.allowReportData` to `false`.
 
 See `PRIVACY.md` for the full privacy notes.
 

@@ -8,7 +8,7 @@ import * as path from "path";
 import * as requireFromString from "require-from-string";
 import { ExtensionContext } from "vscode";
 import { ConfigurationChangeEvent, Disposable, MessageItem, window, workspace, WorkspaceConfiguration } from "vscode";
-import { Endpoint, IProblem, leetcodeHasInited, supportedPlugins } from "./shared";
+import { Endpoint, extensionSettingsSection, IProblem, leetcodeHasInited, legacyLeetcodeHasInited, supportedPlugins } from "./shared";
 import { executeCommand, executeCommandWithProgress } from "./utils/cpUtils";
 import { DialogOptions, openUrl } from "./utils/uiUtils";
 import * as wsl from "./utils/wslUtils";
@@ -23,7 +23,7 @@ class LeetCodeExecutor implements Disposable {
         this.leetCodeRootPath = path.join(__dirname, "..", "..", "node_modules", "vsc-leetcode-cli");
         this.nodeExecutable = this.getNodePath();
         this.configurationChangeListener = workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {
-            if (event.affectsConfiguration("leetcode.nodePath")) {
+            if (event.affectsConfiguration(`${extensionSettingsSection}.nodePath`)) {
                 this.nodeExecutable = this.getNodePath();
             }
         }, this);
@@ -37,7 +37,13 @@ class LeetCodeExecutor implements Disposable {
     }
 
     public async meetRequirements(context: ExtensionContext): Promise<boolean> {
-        const hasInited: boolean | undefined = context.globalState.get(leetcodeHasInited);
+        this.nodeExecutable = this.getNodePath();
+        let hasInited: boolean | undefined = context.globalState.get(leetcodeHasInited);
+        const legacyHasInited: boolean | undefined = context.globalState.get(legacyLeetcodeHasInited);
+        if (hasInited === undefined && legacyHasInited !== undefined) {
+            await context.globalState.update(leetcodeHasInited, legacyHasInited);
+            hasInited = legacyHasInited;
+        }
         if (!hasInited) {
             await this.removeOldCache();
         }
@@ -218,7 +224,7 @@ class LeetCodeExecutor implements Disposable {
     }
 
     private getNodePath(): string {
-        const extensionConfig: WorkspaceConfiguration = workspace.getConfiguration("leetcode", null);
+        const extensionConfig: WorkspaceConfiguration = workspace.getConfiguration(extensionSettingsSection, null);
         return extensionConfig.get<string>("nodePath", "node" /* default value */);
     }
 
