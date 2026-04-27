@@ -112,8 +112,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             vscode.commands.registerCommand("leetcodeMaster.removeFavorite", (node: LeetCodeNode) => star.removeFavorite(node)),
             vscode.commands.registerCommand("leetcodeMaster.problems.sort", () => plugin.switchSortingStrategy()),
             vscode.commands.registerCommand("leetcodeMaster.review.showList", () => reviewListProvider.show()),
+            vscode.commands.registerCommand("leetcodeMaster.review.showTodayDue", () => reviewListProvider.show("due")),
             vscode.commands.registerCommand("leetcodeMaster.review.showStats", () => reviewStatsProvider.show())
         );
+
+        leetCodeStatusBarController.initializeReviewDueStatusBar();
 
         await leetCodeExecutor.switchEndpoint(plugin.getLeetCodeEndpoint());
         await leetCodeManager.getLoginStatus();

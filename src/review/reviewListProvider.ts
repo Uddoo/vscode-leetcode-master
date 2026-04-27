@@ -8,28 +8,33 @@ import * as show from "../commands/show";
 import { explorerNodeManager } from "../explorer/explorerNodeManager";
 import { ILeetCodeWebviewOption, LeetCodeWebview } from "../webview/LeetCodeWebview";
 import { IProblem } from "../shared";
+import { getDueReviewRecordCount, getDueReviewRecords } from "./due";
 import { isConfidenceRating } from "./scheduler";
 import { getReviewDailyGoal, getTodayCompletedReviewCount, sortReviewRecords } from "./settings";
 import { reviewStorage } from "./storage";
 import { ReviewProblemMetadata, ReviewRecord } from "./types";
 import { getNonce } from "./webviewUtils";
 
+export type ReviewListMode = "all" | "due";
+
 class ReviewListProvider extends LeetCodeWebview {
     protected readonly viewType: string = "leetcodeMaster.reviewList";
     private context: vscode.ExtensionContext | undefined;
+    private mode: ReviewListMode = "all";
 
     public initialize(context: vscode.ExtensionContext): void {
         this.context = context;
     }
 
-    public show(): void {
+    public show(mode: ReviewListMode = "all"): void {
+        this.mode = mode;
         this.showWebviewInternal();
         this.postRecords();
     }
 
     protected getWebviewOption(): ILeetCodeWebviewOption {
         return {
-            title: "LeetCode Review List",
+            title: this.getViewContent().title,
             viewColumn: vscode.ViewColumn.Two,
         };
     }
@@ -47,6 +52,7 @@ class ReviewListProvider extends LeetCodeWebview {
         const nonce: string = getNonce();
         const styleUri: vscode.Uri = webview.asWebviewUri(vscode.Uri.file(path.join(this.getReviewResourceRoot(), "reviewList.css")));
         const scriptUri: vscode.Uri = webview.asWebviewUri(vscode.Uri.file(path.join(this.getReviewResourceRoot(), "reviewList.js")));
+        const content: IReviewListContent = this.getViewContent();
 
         return `
             <!DOCTYPE html>
@@ -56,23 +62,23 @@ class ReviewListProvider extends LeetCodeWebview {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
                 <link rel="stylesheet" type="text/css" href="${styleUri}">
-                <title>LeetCode Review List</title>
+                <title>${content.title}</title>
             </head>
             <body>
                 <main class="review-shell">
                     <header class="hero">
                         <div>
-                            <p class="eyebrow">FRSR Review Queue</p>
-                            <h1>LeetCode Review List</h1>
-                            <p class="subtitle">Problems are sorted by their next scheduled review date.</p>
+                            <p class="eyebrow">${content.eyebrow}</p>
+                            <h1>${content.heading}</h1>
+                            <p class="subtitle">${content.subtitle}</p>
                         </div>
                         <button id="refreshButton" class="secondary-button" type="button">Refresh</button>
                     </header>
                     <section id="summary" class="summary"></section>
                     <section class="table-card">
                         <div id="emptyState" class="empty-state hidden">
-                            <h2>No review records yet</h2>
-                            <p>Submit an accepted solution and choose a confidence rating to start tracking reviews.</p>
+                            <h2>${content.emptyTitle}</h2>
+                            <p>${content.emptyDescription}</p>
                         </div>
                         <table id="reviewTable" class="review-table">
                             <thead>
@@ -172,12 +178,16 @@ class ReviewListProvider extends LeetCodeWebview {
         }
         const now: Date = new Date();
         const records: ReviewRecord[] = reviewStorage.getAllReviewRecords();
+        const visibleRecords: ReviewRecord[] = this.mode === "due" ? getDueReviewRecords(records, now) : records;
         await this.panel.webview.postMessage({
             command: "records",
-            records: sortReviewRecords(records, now),
+            records: sortReviewRecords(visibleRecords, now),
             now: now.toISOString(),
             dailyGoal: getReviewDailyGoal(),
+            dueCount: getDueReviewRecordCount(records, now),
+            mode: this.mode,
             todayCompleted: getTodayCompletedReviewCount(records, now),
+            totalRecords: records.length,
         });
     }
 
@@ -204,6 +214,36 @@ class ReviewListProvider extends LeetCodeWebview {
         }
         return this.context.asAbsolutePath(path.join("resources", "review"));
     }
+
+    private getViewContent(): IReviewListContent {
+        if (this.mode === "due") {
+            return {
+                emptyDescription: "You have no problems with a scheduled review time due now or overdue.",
+                emptyTitle: "No due reviews",
+                eyebrow: "Due Review Queue",
+                heading: "LeetCode Master Today Review",
+                subtitle: "Problems whose next scheduled review time is due now or overdue.",
+                title: "LeetCode Master Today Review",
+            };
+        }
+        return {
+            emptyDescription: "Submit an accepted solution and choose a confidence rating to start tracking reviews.",
+            emptyTitle: "No review records yet",
+            eyebrow: "FRSR Review Queue",
+            heading: "LeetCode Review List",
+            subtitle: "Problems are sorted by their next scheduled review date.",
+            title: "LeetCode Review List",
+        };
+    }
 }
 
 export const reviewListProvider: ReviewListProvider = new ReviewListProvider();
+
+interface IReviewListContent {
+    emptyDescription: string;
+    emptyTitle: string;
+    eyebrow: string;
+    heading: string;
+    subtitle: string;
+    title: string;
+}

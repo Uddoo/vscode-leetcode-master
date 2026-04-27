@@ -13,7 +13,9 @@ const ReviewRecordsMigrationKey: string = "leetcodeMaster.reviewRecordsMigrated.
 type ReviewRecordMap = { [problemId: string]: ReviewRecord };
 
 class ReviewStorage {
+    private readonly reviewRecordChangedEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
     private state: vscode.Memento | undefined;
+    public readonly onDidChangeReviewRecords: vscode.Event<void> = this.reviewRecordChangedEmitter.event;
 
     public async initialize(context: vscode.ExtensionContext): Promise<void> {
         this.state = context.globalState;
@@ -67,6 +69,7 @@ class ReviewStorage {
 
         records[problemId] = record;
         await this.getState().update(ReviewRecordsKey, records);
+        this.reviewRecordChangedEmitter.fire();
         return record;
     }
 
@@ -76,6 +79,7 @@ class ReviewStorage {
             next[record.problemId] = record;
         }
         await this.getState().update(ReviewRecordsKey, next);
+        this.reviewRecordChangedEmitter.fire();
     }
 
     private resolveMetadata(problemId: string, existing?: ReviewRecord, metadata?: ReviewProblemMetadata): ReviewProblemMetadata {

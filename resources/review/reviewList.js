@@ -5,6 +5,9 @@
         records: [],
         now: new Date().toISOString(),
         dailyGoal: 5,
+        dueCount: 0,
+        mode: "all",
+        totalRecords: 0,
         todayCompleted: 0
     };
 
@@ -26,6 +29,9 @@
             state.records = Array.isArray(payload.records) ? payload.records : [];
             state.now = payload.now || new Date().toISOString();
             state.dailyGoal = typeof payload.dailyGoal === "number" ? payload.dailyGoal : 5;
+            state.dueCount = typeof payload.dueCount === "number" ? payload.dueCount : getDueCount(state.records);
+            state.mode = payload.mode === "due" ? "due" : "all";
+            state.totalRecords = typeof payload.totalRecords === "number" ? payload.totalRecords : state.records.length;
             state.todayCompleted = typeof payload.todayCompleted === "number" ? payload.todayCompleted : 0;
             render();
             setMessage("");
@@ -43,18 +49,14 @@
 
     function renderSummary() {
         summary.textContent = "";
-        const now = new Date(state.now);
-        const dueCount = state.records.filter(function (record) {
-            return new Date(record.nextReviewDate).getTime() <= now.getTime();
-        }).length;
         const historyCount = state.records.reduce(function (total, record) {
             return total + (Array.isArray(record.reviewHistory) ? record.reviewHistory.length : 0);
         }, 0);
 
-        appendSummaryCard("Tracked", state.records.length, "problems in review list");
-        appendSummaryCard("Due", dueCount, "ready for review now");
+        appendSummaryCard("Tracked", state.totalRecords, "problems in review list");
+        appendSummaryCard("Due", state.dueCount, "ready for review now");
         appendSummaryCard("Today", `${state.todayCompleted} / ${state.dailyGoal}`, "completed reviews / daily goal");
-        appendSummaryCard("Reviews", historyCount, "total completed ratings");
+        appendSummaryCard("Reviews", historyCount, state.mode === "due" ? "completed ratings in due list" : "total completed ratings");
     }
 
     function appendSummaryCard(label, value, caption) {
@@ -172,6 +174,13 @@
             month: "short",
             day: "numeric"
         });
+    }
+
+    function getDueCount(records) {
+        const now = new Date(state.now);
+        return records.filter(function (record) {
+            return new Date(record.nextReviewDate).getTime() <= now.getTime();
+        }).length;
     }
 
     function setMessage(text) {

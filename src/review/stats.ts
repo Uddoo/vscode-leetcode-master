@@ -1,7 +1,8 @@
 // Copyright (c) jdneo. All rights reserved.
 // Licensed under the MIT license.
 
-import { formatLocalDateKey, getRecentLocalDateKeys, isDue } from "./dateUtils";
+import { formatLocalDateKey, getRecentLocalDateKeys } from "./dateUtils";
+import { getDueReviewRecordCount } from "./due";
 import { ConfidenceRating, confidenceRatings, ReviewDailyCount, ReviewRatingCount, ReviewRecord, ReviewStats } from "./types";
 
 const RecentStatsDays: number = 30;
@@ -42,7 +43,7 @@ export function buildReviewStats(records: ReviewRecord[], now: Date = new Date()
     return {
         generatedAt: now.toISOString(),
         totalRecords: records.length,
-        dueCount: records.filter((record: ReviewRecord) => isDue(record.nextReviewDate, now)).length,
+        dueCount: getDueReviewRecordCount(records, now),
         heatmap: dailyTrend,
         ratingDistribution,
         dailyTrend,
