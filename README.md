@@ -61,7 +61,9 @@ LeetCode Master uses the `leetcodeMaster.*` settings namespace so it can coexist
 
 LeetCode Master communicates with the configured LeetCode endpoint to sign in, list problems, preview descriptions, run tests, and submit solutions.
 
-Review records are stored locally in VS Code `globalState`. The review data includes problem ID, title, tags, latest confidence rating, next review date, and review history. The review assistant does not upload this review data to a custom backend.
+Review records are stored in VS Code `globalState`. The review data includes problem ID, title, tags, latest confidence rating, next review date, and review history. LeetCode Master marks only the review records key for VS Code Settings Sync, so your review progress can follow your VS Code account across devices when Settings Sync is enabled. The review assistant does not upload this review data to a custom backend.
+
+LeetCode sign-in cookies and user status are not marked for Settings Sync. Sign in separately on each device.
 
 If you do not want anonymous product telemetry from the inherited LeetCode workflow, set `leetcodeMaster.allowReportData` to `false`.
 

@@ -20,7 +20,7 @@ import { leetCodeExecutor } from "./leetCodeExecutor";
 import { leetCodeManager } from "./leetCodeManager";
 import { reviewListProvider } from "./review/reviewListProvider";
 import { reviewStatsProvider } from "./review/reviewStatsProvider";
-import { reviewStorage } from "./review/storage";
+import { configureReviewRecordSync, reviewStorage } from "./review/storage";
 import { leetCodeStatusBarController } from "./statusbar/leetCodeStatusBarController";
 import { migrateLegacySettings } from "./utils/configurationMigration";
 import { DialogType, promptForOpenOutputChannel } from "./utils/uiUtils";
@@ -49,6 +49,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         leetCodeTreeDataProvider.initialize(context);
         await globalState.initialize(context);
         await reviewStorage.initialize(context);
+        configureReviewRecordSync(context);
         reviewListProvider.initialize(context);
         reviewStatsProvider.initialize(context);
 

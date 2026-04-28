@@ -6,9 +6,10 @@ import { leetCodeChannel } from "../leetCodeChannel";
 import { calculateNextReviewDate, isConfidenceRating } from "./scheduler";
 import { ReviewProblemMetadata, ReviewRecord } from "./types";
 
-const ReviewRecordsKey: string = "leetcodeMaster.reviewRecords.v1";
+export const ReviewRecordsKey: string = "leetcodeMaster.reviewRecords.v1";
 const LegacyReviewRecordsKey: string = "leetcode-review-records-v1";
 const ReviewRecordsMigrationKey: string = "leetcodeMaster.reviewRecordsMigrated.v1";
+export const ReviewRecordSyncKeys: string[] = [ReviewRecordsKey];
 
 type ReviewRecordMap = { [problemId: string]: ReviewRecord };
 
@@ -148,6 +149,10 @@ class ReviewStorage {
 }
 
 export const reviewStorage: ReviewStorage = new ReviewStorage();
+
+export function configureReviewRecordSync(context: vscode.ExtensionContext): void {
+    context.globalState.setKeysForSync(ReviewRecordSyncKeys);
+}
 
 /**
  * Compatibility helper for callers that want the requested `void` API shape.
