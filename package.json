@@ -56,8 +56,11 @@
         "onCommand:leetcodeMaster.switchDefaultLanguage",
         "onCommand:leetcodeMaster.problems.sort",
         "onCommand:leetcodeMaster.review.showList",
+        "onCommand:leetcodeMaster.review.refreshToday",
+        "onCommand:leetcodeMaster.review.openTodayProblem",
         "onCommand:leetcodeMaster.review.showStats",
-        "onView:leetcodeMasterExplorer"
+        "onView:leetcodeMasterExplorer",
+        "onView:leetcodeMasterTodayReview"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -167,6 +170,17 @@
                 "icon": "$(checklist)"
             },
             {
+                "command": "leetcodeMaster.review.refreshToday",
+                "title": "Refresh Today Review",
+                "category": "LeetCode Master",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "leetcodeMaster.review.openTodayProblem",
+                "title": "Open Review Problem",
+                "category": "LeetCode Master"
+            },
+            {
                 "command": "leetcodeMaster.review.showStats",
                 "title": "Show Review Stats",
                 "category": "LeetCode Master",
@@ -187,6 +201,10 @@
                 {
                     "id": "leetcodeMasterExplorer",
                     "name": "Problems"
+                },
+                {
+                    "id": "leetcodeMasterTodayReview",
+                    "name": "Today Review"
                 }
             ]
         },
@@ -221,6 +239,16 @@
                     "command": "leetcodeMaster.review.showStats",
                     "when": "view == leetcodeMasterExplorer",
                     "group": "navigation@5"
+                },
+                {
+                    "command": "leetcodeMaster.review.refreshToday",
+                    "when": "view == leetcodeMasterTodayReview",
+                    "group": "navigation@0"
+                },
+                {
+                    "command": "leetcodeMaster.review.showList",
+                    "when": "view == leetcodeMasterTodayReview",
+                    "group": "navigation@1"
                 },
                 {
                     "command": "leetcodeMaster.signout",
@@ -276,6 +304,10 @@
                 },
                 {
                     "command": "leetcodeMaster.previewProblem",
+                    "when": "never"
+                },
+                {
+                    "command": "leetcodeMaster.review.openTodayProblem",
                     "when": "never"
                 },
                 {

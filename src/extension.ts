@@ -21,6 +21,7 @@ import { leetCodeManager } from "./leetCodeManager";
 import { reviewListProvider } from "./review/reviewListProvider";
 import { reviewStatsProvider } from "./review/reviewStatsProvider";
 import { configureReviewRecordSync, reviewStorage } from "./review/storage";
+import { ITodayReviewTreeNode, todayReviewTreeDataProvider } from "./review/todayReviewTreeDataProvider";
 import { leetCodeStatusBarController } from "./statusbar/leetCodeStatusBarController";
 import { migrateLegacySettings } from "./utils/configurationMigration";
 import { DialogType, promptForOpenOutputChannel } from "./utils/uiUtils";
@@ -30,7 +31,7 @@ import { leetCodeSubmissionProvider } from "./webview/leetCodeSubmissionProvider
 import { markdownEngine } from "./webview/markdownEngine";
 import TrackData from "./utils/trackingUtils";
 import { globalState } from "./globalState";
-import { extensionTreeViewId, initializeExtensionIdentity } from "./shared";
+import { extensionTodayReviewTreeViewId, extensionTreeViewId, initializeExtensionIdentity } from "./shared";
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     try {
@@ -52,6 +53,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         configureReviewRecordSync(context);
         reviewListProvider.initialize(context);
         reviewStatsProvider.initialize(context);
+        todayReviewTreeDataProvider.initialize();
 
         context.subscriptions.push(
             leetCodeStatusBarController,
@@ -61,12 +63,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             leetCodeSolutionProvider,
             reviewListProvider,
             reviewStatsProvider,
+            todayReviewTreeDataProvider,
             leetCodeExecutor,
             markdownEngine,
             codeLensController,
             explorerNodeManager,
             vscode.window.registerFileDecorationProvider(leetCodeTreeItemDecorationProvider),
             vscode.window.createTreeView(extensionTreeViewId, { treeDataProvider: leetCodeTreeDataProvider, showCollapseAll: true }),
+            vscode.window.createTreeView(extensionTodayReviewTreeViewId, { treeDataProvider: todayReviewTreeDataProvider }),
             vscode.commands.registerCommand("leetcodeMaster.deleteCache", () => cache.deleteCache()),
             vscode.commands.registerCommand("leetcodeMaster.toggleLeetCodeCn", () => plugin.switchEndpoint()),
             vscode.commands.registerCommand("leetcodeMaster.signin", () => leetCodeManager.signIn()),
@@ -114,6 +118,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             vscode.commands.registerCommand("leetcodeMaster.problems.sort", () => plugin.switchSortingStrategy()),
             vscode.commands.registerCommand("leetcodeMaster.review.showList", () => reviewListProvider.show()),
             vscode.commands.registerCommand("leetcodeMaster.review.showTodayDue", () => reviewListProvider.show("due")),
+            vscode.commands.registerCommand("leetcodeMaster.review.refreshToday", () => todayReviewTreeDataProvider.refresh()),
+            vscode.commands.registerCommand("leetcodeMaster.review.openTodayProblem", (node: ITodayReviewTreeNode) => todayReviewTreeDataProvider.openProblem(node)),
             vscode.commands.registerCommand("leetcodeMaster.review.showStats", () => reviewStatsProvider.show())
         );
 

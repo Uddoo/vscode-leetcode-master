@@ -3,12 +3,9 @@
 
 import * as path from "path";
 import * as vscode from "vscode";
-import * as list from "../commands/list";
-import * as show from "../commands/show";
-import { explorerNodeManager } from "../explorer/explorerNodeManager";
 import { ILeetCodeWebviewOption, LeetCodeWebview } from "../webview/LeetCodeWebview";
-import { IProblem } from "../shared";
 import { getDueReviewRecordCount, getDueReviewRecords } from "./due";
+import { previewReviewProblem } from "./problemPreview";
 import { isConfidenceRating } from "./scheduler";
 import { getReviewDailyGoal, getTodayCompletedReviewCount, sortReviewRecords } from "./settings";
 import { reviewStorage } from "./storage";
@@ -156,20 +153,7 @@ class ReviewListProvider extends LeetCodeWebview {
             throw new Error("Missing problem id.");
         }
 
-        let problem: IProblem | undefined = explorerNodeManager.getNodeById(problemId);
-        if (!problem) {
-            await explorerNodeManager.refreshCache();
-            problem = explorerNodeManager.getNodeById(problemId);
-        }
-        if (!problem) {
-            const problems: IProblem[] = await list.listProblems();
-            problem = problems.find((item: IProblem) => item.id === problemId);
-        }
-        if (!problem) {
-            throw new Error(`Failed to resolve problem with id: ${problemId}.`);
-        }
-
-        await show.previewProblem(problem);
+        await previewReviewProblem(problemId);
     }
 
     private async postRecords(): Promise<void> {

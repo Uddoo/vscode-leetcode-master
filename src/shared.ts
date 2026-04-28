@@ -116,6 +116,7 @@ export const extensionSettingsSection: string = "leetcodeMaster";
 export const legacyExtensionSettingsSection: string = "leetcode";
 export const extensionCommandPrefix: string = "leetcodeMaster";
 export const extensionTreeViewId: string = "leetcodeMasterExplorer";
+export const extensionTodayReviewTreeViewId: string = "leetcodeMasterTodayReview";
 export const extensionUriScheme: string = "leetcode-master";
 export const leetcodeHasInited: string = "leetcodeMaster.hasInited";
 export const legacyLeetcodeHasInited: string = "leetcode.hasInited";
