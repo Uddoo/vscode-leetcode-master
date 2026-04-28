@@ -81,6 +81,7 @@ export interface IProblem {
     passRate: string;
     companies: string[];
     tags: string[];
+    isDaily?: boolean;
 }
 
 export const defaultProblem: IProblem = {
@@ -165,9 +166,9 @@ export const getUrl = (key: string) => {
     const point = leetCodeConfig.get<string>("endpoint", Endpoint.LeetCode);
     switch (point) {
         case Endpoint.LeetCodeCN:
-            return urlsCn[key];
+            return (urlsCn as Record<string, string>)[key];
         case Endpoint.LeetCode:
         default:
-            return urls[key];
+            return (urls as Record<string, string>)[key];
     }
 };

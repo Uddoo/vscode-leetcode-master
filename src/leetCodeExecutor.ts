@@ -8,8 +8,9 @@ import * as path from "path";
 import * as requireFromString from "require-from-string";
 import { ExtensionContext } from "vscode";
 import { ConfigurationChangeEvent, Disposable, MessageItem, window, workspace, WorkspaceConfiguration } from "vscode";
-import { Endpoint, extensionSettingsSection, IProblem, leetcodeHasInited, legacyLeetcodeHasInited, supportedPlugins } from "./shared";
+import { Endpoint, extensionSettingsSection, getUrl, IProblem, leetcodeHasInited, legacyLeetcodeHasInited, supportedPlugins } from "./shared";
 import { executeCommand, executeCommandWithProgress } from "./utils/cpUtils";
+import { LcAxios } from "./utils/httpUtils";
 import { DialogOptions, openUrl } from "./utils/uiUtils";
 import * as wsl from "./utils/wslUtils";
 import { toWslPath, useWsl } from "./utils/wslUtils";
@@ -18,6 +19,7 @@ class LeetCodeExecutor implements Disposable {
     private leetCodeRootPath: string;
     private nodeExecutable: string;
     private configurationChangeListener: Disposable;
+    private dailyChallengeCache: { date: string; data: IProblem } | null = null;
 
     constructor() {
         this.leetCodeRootPath = path.join(__dirname, "..", "..", "node_modules", "vsc-leetcode-cli");
@@ -171,7 +173,7 @@ class LeetCodeExecutor implements Disposable {
     public async submitSolution(filePath: string): Promise<string> {
         try {
             return await this.executeCommandWithProgressEx("Submitting to LeetCode...", this.nodeExecutable, [await this.getLeetCodeBinaryPath(), "submit", `"${filePath}"`]);
-        } catch (error) {
+        } catch (error: any) {
             if (error.result) {
                 return error.result;
             }
@@ -211,8 +213,66 @@ class LeetCodeExecutor implements Disposable {
             "module.exports = plugin",
             "module.exports = { COMPONIES, TAGS }",
         );
-        const { COMPONIES, TAGS } = requireFromString(companiesTagsSrc, companiesTagsPath);
+        const { COMPONIES, TAGS } = (requireFromString as any)(companiesTagsSrc, companiesTagsPath);
         return { companies: COMPONIES, tags: TAGS };
+    }
+
+    public async getDailyChallenge(): Promise<IProblem | undefined> {
+        const today: string = new Date().toISOString().slice(0, 10);
+        if (this.dailyChallengeCache?.date === today) {
+            return this.dailyChallengeCache.data;
+        }
+
+        try {
+            const graphqlUrl: string = getUrl("graphql");
+            const endpoint: string = workspace.getConfiguration(extensionSettingsSection).get<string>("endpoint", Endpoint.LeetCode);
+            const isCn: boolean = endpoint === Endpoint.LeetCodeCN;
+            console.log(`[LeetCode Master] Fetching daily challenge from: ${graphqlUrl} (CN: ${isCn})`);
+
+            // leetcode.com uses activeDailyCodingChallengeQuestion, leetcode.cn uses todayRecord (array)
+            const query: string = isCn
+                ? `query questionOfToday { todayRecord { date question { questionFrontendId title difficulty acRate } } }`
+                : `query questionOfToday { activeDailyCodingChallengeQuestion { date question { questionFrontendId title difficulty acRate } } }`;
+
+            const response: any = await LcAxios(graphqlUrl, {
+                method: "POST",
+                data: { query, variables: {} },
+            });
+
+            const responseData = response.data?.data;
+            let dailyData: any;
+            if (isCn) {
+                // todayRecord is an array, take the first element
+                const records = responseData?.todayRecord;
+                dailyData = Array.isArray(records) ? records[0] : undefined;
+            } else {
+                dailyData = responseData?.activeDailyCodingChallengeQuestion;
+            }
+
+            if (!dailyData?.question) {
+                console.log("[LeetCode Master] Daily challenge API returned no question data. Response keys:", Object.keys(responseData || {}));
+                return undefined;
+            }
+            const q = dailyData.question;
+            const problem: IProblem = {
+                id: q.questionFrontendId,
+                name: q.title,
+                difficulty: q.difficulty,
+                passRate: String(q.acRate || ""),
+                isFavorite: false,
+                locked: false,
+                state: 3, // ProblemState.Unknown
+                companies: [] as string[],
+                tags: [] as string[],
+                isDaily: true,
+            };
+            this.dailyChallengeCache = { date: today, data: problem };
+            console.log(`[LeetCode Master] Daily challenge fetched: [${problem.id}] ${problem.name}`);
+            return problem;
+        } catch (e) {
+            console.error("[LeetCode Master] Failed to fetch daily challenge:", e);
+            return undefined;
+        }
     }
 
     public get node(): string {

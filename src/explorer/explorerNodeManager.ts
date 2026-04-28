@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { Disposable } from "vscode";
 import * as list from "../commands/list";
 import { getSortingStrategy } from "../commands/plugin";
+import { leetCodeExecutor } from "../leetCodeExecutor";
 import { Category, defaultProblem, ProblemState, SortingStrategy } from "../shared";
 import { shouldHideSolvedProblem } from "../utils/settingUtils";
 import { LeetCodeNode } from "./LeetCodeNode";
@@ -29,6 +30,13 @@ class ExplorerNodeManager implements Disposable {
                 this.tagSet.add(tag);
             }
         }
+        console.log(`[LeetCode Master] Refreshing daily challenge...`);
+        try {
+            await this.refreshDailyChallenge();
+        } catch (e) {
+            console.error(`[LeetCode Master] Error refreshing daily challenge:`, e);
+        }
+        console.log(`[LeetCode Master] Daily challenge node: ${this.dailyChallengeNode ? `[${this.dailyChallengeNode.id}] ${this.dailyChallengeNode.name}` : 'not available'}`);
     }
 
     public getRootNodes(): LeetCodeNode[] {
@@ -57,9 +65,29 @@ class ExplorerNodeManager implements Disposable {
     }
 
     public getAllNodes(): LeetCodeNode[] {
-        return this.applySortingStrategy(
+        const nodes: LeetCodeNode[] = this.applySortingStrategy(
             Array.from(this.explorerNodeMap.values()),
         );
+        const dailyNode: LeetCodeNode | undefined = this.getDailyChallengeNode();
+        if (dailyNode) {
+            nodes.unshift(dailyNode);
+        }
+        return nodes;
+    }
+
+    public getDailyChallengeNode(): LeetCodeNode | undefined {
+        return this.dailyChallengeNode;
+    }
+
+    private dailyChallengeNode: LeetCodeNode | undefined;
+
+    public async refreshDailyChallenge(): Promise<void> {
+        const problem = await leetCodeExecutor.getDailyChallenge();
+        if (problem) {
+            this.dailyChallengeNode = new LeetCodeNode(problem);
+        } else {
+            this.dailyChallengeNode = undefined;
+        }
     }
 
     public getAllDifficultyNodes(): LeetCodeNode[] {
@@ -152,6 +180,7 @@ class ExplorerNodeManager implements Disposable {
         this.explorerNodeMap.clear();
         this.companySet.clear();
         this.tagSet.clear();
+        this.dailyChallengeNode = undefined;
     }
 
     private sortSubCategoryNodes(subCategoryNodes: LeetCodeNode[], category: Category): void {

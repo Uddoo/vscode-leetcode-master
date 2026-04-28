@@ -47,6 +47,10 @@ export class LeetCodeNode {
         return this.isProblemNode;
     }
 
+    public get isDaily(): boolean {
+        return this.data.isDaily === true;
+    }
+
     public get previewCommand(): Command {
         return {
             title: "Preview Problem",
