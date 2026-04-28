@@ -10,11 +10,7 @@ It keeps the core LeetCode workflow from the original open-source extension and 
 - Switch between `leetcode.com` and `leetcode.cn` endpoints.
 - Prompt after an accepted submission to add the problem to your review list.
 - Rate review confidence as `Again`, `Hard`, `Good`, or `Easy`.
-- Schedule the next review with FRSR-style intervals:
-  - `Again`: tomorrow
-  - `Hard`: 3 days later
-  - `Good`: 7 days later
-  - `Easy`: 14 days later
+- Schedule the next review with an FSRS-style memory model. Repeated `Easy` ratings increase stability and push simple problems farther into the future, while `Again` shortens the interval.
 - Open `LeetCode Master: Show Review List` to review scheduled problems, jump to the problem preview, and update the rating.
 - Open `LeetCode Master: Show Review Stats` to inspect review insights, a 30-day heatmap, confidence distribution, and daily completion trend.
 - Configure Review List sorting and daily review target from VS Code Settings.
@@ -44,6 +40,16 @@ LeetCode Master uses the `leetcodeMaster.*` settings namespace so it can coexist
 | --- | --- | --- |
 | `leetcodeMaster.review.sortStrategy` | Controls the order of Review List records. Options: `Sort By Next Scheduled Review (ASC)`, `Sort By Next Scheduled Review (DESC)`, `Sort By Review Delayed Hours (ASC)`, `Sort By Review Delayed Hours (DESC)`. | `Sort By Next Scheduled Review (ASC)` |
 | `leetcodeMaster.review.dailyGoal` | Daily target number shown in the Review List progress summary. It does not block extra reviews. | `5` |
+| `leetcodeMaster.review.desiredRetention` | Target recall probability used by the FSRS scheduler. Higher values create shorter intervals and more reviews. | `0.9` |
+| `leetcodeMaster.review.maximumIntervalDays` | Maximum FSRS review interval in days. | `36500` |
+| `leetcodeMaster.review.sync.backend` | Review data synchronization backend. Use `localFolder` with a cloud-synced directory such as Nutstore, OneDrive, Dropbox, or iCloud. | `off` |
+| `leetcodeMaster.review.sync.folder` | Local folder used for review data synchronization when `leetcodeMaster.review.sync.backend` is `localFolder`. | `""` |
+
+## Review Sync
+
+LeetCode Master can synchronize review data through a local folder. Point `leetcodeMaster.review.sync.folder` to a directory managed by a third-party sync tool, such as Nutstore, OneDrive, Dropbox, or iCloud, then set `leetcodeMaster.review.sync.backend` to `localFolder`.
+
+The sync folder stores current FSRS card state in sharded JSON files under `cards/` and append-only review events under `logs/`. This keeps the daily review queue portable across devices while preserving review history for statistics and insights.
 
 ## Core Settings
 

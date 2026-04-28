@@ -213,7 +213,7 @@ class ReviewListProvider extends LeetCodeWebview {
         return {
             emptyDescription: "Submit an accepted solution and choose a confidence rating to start tracking reviews.",
             emptyTitle: "No review records yet",
-            eyebrow: "FRSR Review Queue",
+            eyebrow: "FSRS Review Queue",
             heading: "LeetCode Review List",
             subtitle: "Problems are sorted by their next scheduled review date.",
             title: "LeetCode Review List",

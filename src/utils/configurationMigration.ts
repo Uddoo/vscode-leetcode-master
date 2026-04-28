@@ -35,6 +35,10 @@ const MigratedConfigurationKeys: string[] = [
     "problems.sortStrategy",
     "review.sortStrategy",
     "review.dailyGoal",
+    "review.desiredRetention",
+    "review.maximumIntervalDays",
+    "review.sync.backend",
+    "review.sync.folder",
     "allowReportData",
 ];
 

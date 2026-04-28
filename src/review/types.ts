@@ -10,6 +10,10 @@ export const confidenceRatings: ConfidenceRating[] = ["Again", "Hard", "Good", "
 export interface ReviewHistoryEntry {
     reviewedAt: string;
     rating: ConfidenceRating;
+    scheduledDays?: number;
+    elapsedDays?: number;
+    stability?: number;
+    difficulty?: number;
 }
 
 export interface ReviewRecord {
@@ -19,6 +23,14 @@ export interface ReviewRecord {
     lastRating: ConfidenceRating;
     nextReviewDate: string;
     reviewHistory: ReviewHistoryEntry[];
+    stability: number;
+    difficulty: number;
+    retrievability: number;
+    scheduledDays: number;
+    elapsedDays: number;
+    reps: number;
+    lapses: number;
+    lastReviewDate: string;
     createdAt: string;
     updatedAt: string;
 }

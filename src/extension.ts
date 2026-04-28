@@ -118,6 +118,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             vscode.commands.registerCommand("leetcodeMaster.problems.sort", () => plugin.switchSortingStrategy()),
             vscode.commands.registerCommand("leetcodeMaster.review.showList", () => reviewListProvider.show()),
             vscode.commands.registerCommand("leetcodeMaster.review.showTodayDue", () => reviewListProvider.show("due")),
+            vscode.commands.registerCommand("leetcodeMaster.review.syncNow", async () => {
+                await reviewStorage.syncNow();
+                todayReviewTreeDataProvider.refresh();
+                vscode.window.showInformationMessage("LeetCode Master review data synchronized.");
+            }),
             vscode.commands.registerCommand("leetcodeMaster.review.refreshToday", () => todayReviewTreeDataProvider.refresh()),
             vscode.commands.registerCommand("leetcodeMaster.review.openTodayProblem", (node: ITodayReviewTreeNode) => todayReviewTreeDataProvider.openProblem(node)),
             vscode.commands.registerCommand("leetcodeMaster.review.showStats", () => reviewStatsProvider.show())

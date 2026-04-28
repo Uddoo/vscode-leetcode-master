@@ -3,15 +3,15 @@
 
 import * as vscode from "vscode";
 import { leetCodeChannel } from "../leetCodeChannel";
-import { calculateNextReviewDate, isConfidenceRating } from "./scheduler";
-import { ReviewProblemMetadata, ReviewRecord } from "./types";
+import { isConfidenceRating, rebuildReviewScheduleFromHistory, scheduleReviewRecord, IReviewScheduleResult } from "./scheduler";
+import { getReviewDesiredRetention, getReviewMaximumIntervalDays } from "./settings";
+import { reviewSync, ReviewRecordMap } from "./sync";
+import { ReviewHistoryEntry, ReviewProblemMetadata, ReviewRecord } from "./types";
 
 export const ReviewRecordsKey: string = "leetcodeMaster.reviewRecords.v1";
 const LegacyReviewRecordsKey: string = "leetcode-review-records-v1";
 const ReviewRecordsMigrationKey: string = "leetcodeMaster.reviewRecordsMigrated.v1";
 export const ReviewRecordSyncKeys: string[] = [ReviewRecordsKey];
-
-type ReviewRecordMap = { [problemId: string]: ReviewRecord };
 
 class ReviewStorage {
     private readonly reviewRecordChangedEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
@@ -21,6 +21,8 @@ class ReviewStorage {
     public async initialize(context: vscode.ExtensionContext): Promise<void> {
         this.state = context.globalState;
         await this.migrateLegacyReviewRecords();
+        await reviewSync.initialize(context);
+        await this.syncNow();
     }
 
     public getAllReviewRecords(): ReviewRecord[] {
@@ -53,25 +55,49 @@ class ReviewStorage {
         const nowIso: string = now.toISOString();
         const existing: ReviewRecord | undefined = records[problemId];
         const resolvedMetadata: ReviewProblemMetadata = this.resolveMetadata(problemId, existing, metadata);
+        const schedule: IReviewScheduleResult = scheduleReviewRecord(rating, existing, now, this.getSchedulerOptions());
         const record: ReviewRecord = {
             problemId,
             problemTitle: resolvedMetadata.problemTitle,
             tags: resolvedMetadata.tags,
             lastRating: rating,
-            nextReviewDate: calculateNextReviewDate(rating, now).toISOString(),
+            nextReviewDate: schedule.nextReviewDate.toISOString(),
             reviewHistory: existing ? existing.reviewHistory.slice() : [],
+            stability: schedule.stability,
+            difficulty: schedule.difficulty,
+            retrievability: schedule.retrievability,
+            scheduledDays: schedule.scheduledDays,
+            elapsedDays: schedule.elapsedDays,
+            reps: schedule.reps,
+            lapses: schedule.lapses,
+            lastReviewDate: schedule.lastReviewDate,
             createdAt: existing ? existing.createdAt : nowIso,
             updatedAt: nowIso,
         };
-        record.reviewHistory.push({
+        const historyEntry: ReviewHistoryEntry = {
             reviewedAt: nowIso,
             rating,
-        });
+            scheduledDays: schedule.scheduledDays,
+            elapsedDays: schedule.elapsedDays,
+            stability: schedule.stability,
+            difficulty: schedule.difficulty,
+        };
+        record.reviewHistory.push(historyEntry);
 
         records[problemId] = record;
         await this.getState().update(ReviewRecordsKey, records);
+        await reviewSync.recordReviewEvent(record, historyEntry, existing);
         this.reviewRecordChangedEmitter.fire();
         return record;
+    }
+
+    public async syncNow(): Promise<void> {
+        const mergedRecords: ReviewRecordMap | undefined = await reviewSync.syncRecords(this.getRecordMap());
+        if (!mergedRecords) {
+            return;
+        }
+        await this.getState().update(ReviewRecordsKey, mergedRecords);
+        this.reviewRecordChangedEmitter.fire();
     }
 
     public async replaceAll(records: ReviewRecord[]): Promise<void> {
@@ -111,18 +137,48 @@ class ReviewStorage {
             leetCodeChannel.appendLine("[Review] Ignored invalid review record in globalState.");
             return undefined;
         }
+        const reviewHistory: ReviewHistoryEntry[] = Array.isArray(record.reviewHistory)
+            ? record.reviewHistory.filter((entry) => entry && isConfidenceRating(entry.rating) && !!entry.reviewedAt)
+            : [];
+        const schedule: IReviewScheduleResult | undefined = this.resolveSchedule(record, reviewHistory);
+        const nowIso: string = new Date().toISOString();
         return {
             problemId: record.problemId,
             problemTitle: record.problemTitle || `Problem ${record.problemId}`,
             tags: Array.isArray(record.tags) ? record.tags : [],
             lastRating: record.lastRating,
-            nextReviewDate: record.nextReviewDate || new Date().toISOString(),
-            reviewHistory: Array.isArray(record.reviewHistory)
-                ? record.reviewHistory.filter((entry) => entry && isConfidenceRating(entry.rating) && !!entry.reviewedAt)
-                : [],
-            createdAt: record.createdAt || new Date().toISOString(),
-            updatedAt: record.updatedAt || new Date().toISOString(),
+            nextReviewDate: record.nextReviewDate || (schedule ? schedule.nextReviewDate.toISOString() : nowIso),
+            reviewHistory,
+            stability: this.resolveNumber(record.stability, schedule ? schedule.stability : 0.1),
+            difficulty: this.resolveNumber(record.difficulty, schedule ? schedule.difficulty : 5),
+            retrievability: this.resolveNumber(record.retrievability, schedule ? schedule.retrievability : 0),
+            scheduledDays: this.resolveNumber(record.scheduledDays, schedule ? schedule.scheduledDays : 1),
+            elapsedDays: this.resolveNumber(record.elapsedDays, schedule ? schedule.elapsedDays : 0),
+            reps: this.resolveNumber(record.reps, schedule ? schedule.reps : reviewHistory.length),
+            lapses: this.resolveNumber(record.lapses, schedule ? schedule.lapses : this.getLapseCount(reviewHistory)),
+            lastReviewDate: record.lastReviewDate || (schedule ? schedule.lastReviewDate : reviewHistory.length ? reviewHistory[reviewHistory.length - 1].reviewedAt : nowIso),
+            createdAt: record.createdAt || nowIso,
+            updatedAt: record.updatedAt || nowIso,
         };
+    }
+
+    private resolveSchedule(record: ReviewRecord, reviewHistory: ReviewHistoryEntry[]): IReviewScheduleResult | undefined {
+        return rebuildReviewScheduleFromHistory(reviewHistory, this.getSchedulerOptions(), record.createdAt);
+    }
+
+    private getSchedulerOptions(): { desiredRetention: number; maximumIntervalDays: number } {
+        return {
+            desiredRetention: getReviewDesiredRetention(),
+            maximumIntervalDays: getReviewMaximumIntervalDays(),
+        };
+    }
+
+    private resolveNumber(value: number, fallback: number): number {
+        return typeof value === "number" && isFinite(value) ? value : fallback;
+    }
+
+    private getLapseCount(reviewHistory: ReviewHistoryEntry[]): number {
+        return reviewHistory.reduce((count: number, entry: ReviewHistoryEntry) => count + (entry.rating === "Again" ? 1 : 0), 0);
     }
 
     private getState(): vscode.Memento {
@@ -151,7 +207,8 @@ class ReviewStorage {
 export const reviewStorage: ReviewStorage = new ReviewStorage();
 
 export function configureReviewRecordSync(context: vscode.ExtensionContext): void {
-    context.globalState.setKeysForSync(ReviewRecordSyncKeys);
+    const syncBackend: string = vscode.workspace.getConfiguration("leetcodeMaster.review.sync").get<string>("backend", "off");
+    context.globalState.setKeysForSync(syncBackend === "localFolder" ? [] : ReviewRecordSyncKeys);
 }
 
 /**

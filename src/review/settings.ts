@@ -13,6 +13,8 @@ export namespace ReviewSortStrategy {
 }
 
 const DefaultDailyGoal: number = 5;
+const DefaultDesiredRetention: number = 0.9;
+const DefaultMaximumIntervalDays: number = 36500;
 const MillisecondsPerHour: number = 60 * 60 * 1000;
 const SupportedSortStrategies: string[] = [
     ReviewSortStrategy.NextScheduledReviewAsc,
@@ -35,6 +37,22 @@ export function getReviewDailyGoal(): number {
         return Math.floor(configured);
     }
     return DefaultDailyGoal;
+}
+
+export function getReviewDesiredRetention(): number {
+    const configured: number | undefined = getReviewConfiguration().get<number>("desiredRetention");
+    if (typeof configured === "number" && isFinite(configured) && configured >= 0.7 && configured <= 0.97) {
+        return configured;
+    }
+    return DefaultDesiredRetention;
+}
+
+export function getReviewMaximumIntervalDays(): number {
+    const configured: number | undefined = getReviewConfiguration().get<number>("maximumIntervalDays");
+    if (typeof configured === "number" && isFinite(configured) && configured >= 1) {
+        return Math.floor(configured);
+    }
+    return DefaultMaximumIntervalDays;
 }
 
 export function sortReviewRecords(records: ReviewRecord[], now: Date = new Date(), strategy: string = getReviewSortStrategy()): ReviewRecord[] {
