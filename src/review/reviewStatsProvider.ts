@@ -63,6 +63,13 @@ class ReviewStatsProvider extends LeetCodeWebview {
                         <button id="refreshButton" class="secondary-button" type="button">Refresh</button>
                     </header>
                     <section id="summary" class="summary-grid"></section>
+                    <section class="insight-section">
+                        <div class="chart-heading">
+                            <h2>Review Insights</h2>
+                            <span>Actionable review signals</span>
+                        </div>
+                        <div id="insights" class="insight-grid"></div>
+                    </section>
                     <section class="chart-grid">
                         <article class="chart-card">
                             <div class="chart-heading">

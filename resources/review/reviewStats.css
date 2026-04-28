@@ -91,6 +91,8 @@ h2 {
 }
 
 .summary-card,
+.insight-section,
+.insight-card,
 .chart-card {
     border: 1px solid var(--stats-border);
     border-width: 1px 0 0;
@@ -105,6 +107,50 @@ h2 {
     display: block;
     margin-bottom: 6px;
     font-size: 28px;
+}
+
+.insight-section {
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.insight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.insight-card {
+    padding: 14px;
+    border-width: 1px;
+    border-radius: 2px;
+}
+
+.insight-card h3 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.insight-card strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 20px;
+}
+
+.insight-card p {
+    margin-bottom: 0;
+    color: var(--stats-muted);
+    line-height: 1.45;
+}
+
+.insight-warning {
+    border-color: var(--vscode-editorWarning-foreground, var(--stats-border));
+}
+
+.insight-success {
+    border-color: var(--vscode-testing-iconPassed, var(--stats-border));
 }
 
 .chart-grid {
@@ -241,6 +287,7 @@ h2 {
 
     .secondary-button,
     .summary-card,
+    .insight-section,
     .chart-card {
         margin-top: 12px;
     }

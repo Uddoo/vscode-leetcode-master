@@ -1,6 +1,7 @@
 (function () {
     const vscode = acquireVsCodeApi();
     const summary = document.getElementById("summary");
+    const insights = document.getElementById("insights");
     const heatmap = document.getElementById("heatmap");
     const ratingBars = document.getElementById("ratingBars");
     const trendLine = document.getElementById("trendLine");
@@ -24,6 +25,7 @@
 
     function renderStats(stats) {
         renderSummary(stats);
+        renderInsights(stats.insights || []);
         renderHeatmap(stats.heatmap || []);
         renderRatingBars(stats.ratingDistribution || []);
         renderTrendLine(stats.dailyTrend || []);
@@ -34,6 +36,41 @@
         appendSummaryCard("Tracked", stats.totalRecords || 0, "problems");
         appendSummaryCard("Due", stats.dueCount || 0, "problems ready now");
         appendSummaryCard("Updated", formatDateTime(stats.generatedAt), "local time");
+    }
+
+    function renderInsights(items) {
+        insights.textContent = "";
+        if (!items.length) {
+            const empty = document.createElement("div");
+            empty.className = "insight-card insight-info";
+            const title = document.createElement("h3");
+            title.textContent = "No insights yet";
+            empty.appendChild(title);
+            const description = document.createElement("p");
+            description.textContent = "Add accepted submissions to the review list to generate review insights.";
+            empty.appendChild(description);
+            insights.appendChild(empty);
+            return;
+        }
+
+        items.forEach(function (item) {
+            const card = document.createElement("article");
+            card.className = `insight-card insight-${item.severity || "info"}`;
+
+            const title = document.createElement("h3");
+            title.textContent = item.title || "Insight";
+            card.appendChild(title);
+
+            const value = document.createElement("strong");
+            value.textContent = item.value || "";
+            card.appendChild(value);
+
+            const description = document.createElement("p");
+            description.textContent = item.description || "";
+            card.appendChild(description);
+
+            insights.appendChild(card);
+        });
     }
 
     function appendSummaryCard(label, value, caption) {

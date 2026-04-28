@@ -16,7 +16,7 @@ It keeps the core LeetCode workflow from the original open-source extension and 
   - `Good`: 7 days later
   - `Easy`: 14 days later
 - Open `LeetCode Master: Show Review List` to review scheduled problems, jump to the problem preview, and update the rating.
-- Open `LeetCode Master: Show Review Stats` to inspect a 30-day heatmap, confidence distribution, and daily completion trend.
+- Open `LeetCode Master: Show Review Stats` to inspect review insights, a 30-day heatmap, confidence distribution, and daily completion trend.
 - Configure Review List sorting and daily review target from VS Code Settings.
 
 ## Requirements
@@ -33,7 +33,7 @@ It keeps the core LeetCode workflow from the original open-source extension and 
 4. Submit the solution with `Submit`.
 5. When the result is accepted, choose whether to add it to the review list and select a confidence rating.
 6. Use `Show Review List` for scheduled review sessions.
-7. Use `Show Review Stats` to check review activity and confidence distribution.
+7. Use `Show Review Stats` to check action-oriented insights, review activity, and confidence distribution.
 
 ## Review Settings
 

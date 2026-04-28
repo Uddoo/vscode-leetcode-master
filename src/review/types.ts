@@ -38,11 +38,21 @@ export interface ReviewRatingCount {
     count: number;
 }
 
+export type ReviewInsightSeverity = "info" | "warning" | "success";
+
+export interface ReviewInsight {
+    title: string;
+    value: string;
+    description: string;
+    severity: ReviewInsightSeverity;
+}
+
 export interface ReviewStats {
     generatedAt: string;
     totalRecords: number;
     dueCount: number;
     heatmap: ReviewDailyCount[];
+    insights: ReviewInsight[];
     ratingDistribution: ReviewRatingCount[];
     dailyTrend: ReviewDailyCount[];
 }
