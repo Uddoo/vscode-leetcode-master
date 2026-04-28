@@ -2,9 +2,9 @@
     "name": "leetcode-master",
     "displayName": "LeetCode Master",
     "description": "Practice LeetCode in VS Code with spaced repetition, review queues, and review analytics.",
-    "version": "1.0.0",
+    "version": "0.1.2",
     "author": "Uddoo",
-    "publisher": "leetcode-master",
+    "publisher": "uddoo",
     "license": "MIT",
     "icon": "resources/LeetCode.png",
     "engines": {
@@ -19,8 +19,7 @@
         "url": "https://github.com/Uddoo/vscode-leetcode-master/issues"
     },
     "categories": [
-        "Other",
-        "Visualization"
+        "Snippets"
     ],
     "keywords": [
         "leetcode",
