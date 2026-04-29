@@ -202,11 +202,11 @@ class ReviewListProvider extends LeetCodeWebview {
     private getViewContent(): IReviewListContent {
         if (this.mode === "due") {
             return {
-                emptyDescription: "You have no problems with a scheduled review time due now or overdue.",
+                emptyDescription: "You have no problems with a scheduled review date due today or overdue.",
                 emptyTitle: "No due reviews",
                 eyebrow: "Due Review Queue",
                 heading: "LeetCode Master Today Review",
-                subtitle: "Problems whose next scheduled review time is due now or overdue.",
+                subtitle: "Problems whose next scheduled review date is due today or overdue.",
                 title: "LeetCode Master Today Review",
             };
         }

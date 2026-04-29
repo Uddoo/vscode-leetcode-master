@@ -2,7 +2,7 @@
     "name": "leetcode-master",
     "displayName": "LeetCode Master",
     "description": "Practice LeetCode in VS Code with spaced repetition, review queues, and review analytics.",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "author": "Uddoo",
     "publisher": "uddoo",
     "license": "MIT",
@@ -872,6 +872,7 @@
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
+        "test:review-due": "node scripts/test-review-due.js",
         "test:review-sync": "node scripts/test-review-sync.js",
         "watch": "tsc -watch -p ./",
         "lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",

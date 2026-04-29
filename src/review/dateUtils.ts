@@ -25,7 +25,10 @@ export function getRecentLocalDateKeys(days: number, now: Date = new Date()): st
 
 export function isDue(isoDate: string, now: Date = new Date()): boolean {
     const date: Date = new Date(isoDate);
-    return !isNaN(date.getTime()) && date.getTime() <= now.getTime();
+    if (isNaN(date.getTime())) {
+        return false;
+    }
+    return startOfLocalDay(date).getTime() <= startOfLocalDay(now).getTime();
 }
 
 function padTwoDigits(value: number): string {

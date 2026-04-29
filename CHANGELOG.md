@@ -2,6 +2,17 @@
 
 All notable changes to LeetCode Master are documented in this file.
 
+## [0.1.6] - 2026-04-29
+
+### Fixed
+
+- Fixed Today Review and the review-due status bar count so reviews scheduled for the current local date are treated as due even when their stored timestamp is later in the day.
+- Updated due review copy to describe reviews due today or overdue instead of only reviews due at the current exact time.
+
+### Added
+
+- Added a review due-date smoke test covering same-day, overdue, future-date, and invalid-date cases.
+
 ## [0.1.5] - 2026-04-29
 
 ### Added
