@@ -6,6 +6,7 @@ import { Disposable } from "vscode";
 import * as list from "../commands/list";
 import { getSortingStrategy } from "../commands/plugin";
 import { leetCodeExecutor } from "../leetCodeExecutor";
+import { leetCodeChannel } from "../leetCodeChannel";
 import { Category, defaultProblem, ProblemState, SortingStrategy } from "../shared";
 import { shouldHideSolvedProblem } from "../utils/settingUtils";
 import { LeetCodeNode } from "./LeetCodeNode";
@@ -30,13 +31,13 @@ class ExplorerNodeManager implements Disposable {
                 this.tagSet.add(tag);
             }
         }
-        console.log(`[LeetCode Master] Refreshing daily challenge...`);
+        leetCodeChannel.appendLine("[LeetCode Master] Refreshing daily challenge...");
         try {
             await this.refreshDailyChallenge();
         } catch (e) {
-            console.error(`[LeetCode Master] Error refreshing daily challenge:`, e);
+            leetCodeChannel.appendLine(`[LeetCode Master] Error refreshing daily challenge: ${e && e.message ? e.message : e.toString()}`);
         }
-        console.log(`[LeetCode Master] Daily challenge node: ${this.dailyChallengeNode ? `[${this.dailyChallengeNode.id}] ${this.dailyChallengeNode.name}` : 'not available'}`);
+        leetCodeChannel.appendLine(`[LeetCode Master] Daily challenge node: ${this.dailyChallengeNode ? `[${this.dailyChallengeNode.id}] ${this.dailyChallengeNode.name}` : "not available"}`);
     }
 
     public getRootNodes(): LeetCodeNode[] {

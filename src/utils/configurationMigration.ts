@@ -39,6 +39,9 @@ const MigratedConfigurationKeys: string[] = [
     "review.maximumIntervalDays",
     "review.sync.backend",
     "review.sync.folder",
+    "review.sync.webdav.url",
+    "review.sync.webdav.username",
+    "review.sync.webdav.rootPath",
     "allowReportData",
 ];
 

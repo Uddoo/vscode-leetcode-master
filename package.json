@@ -2,7 +2,7 @@
     "name": "leetcode-master",
     "displayName": "LeetCode Master",
     "description": "Practice LeetCode in VS Code with spaced repetition, review queues, and review analytics.",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "author": "Uddoo",
     "publisher": "uddoo",
     "license": "MIT",
@@ -56,6 +56,7 @@
         "onCommand:leetcodeMaster.problems.sort",
         "onCommand:leetcodeMaster.review.showList",
         "onCommand:leetcodeMaster.review.syncNow",
+        "onCommand:leetcodeMaster.review.setWebDavPassword",
         "onCommand:leetcodeMaster.review.refreshToday",
         "onCommand:leetcodeMaster.review.openTodayProblem",
         "onCommand:leetcodeMaster.review.showStats",
@@ -174,6 +175,12 @@
                 "title": "Sync Review Data",
                 "category": "LeetCode Master",
                 "icon": "$(sync)"
+            },
+            {
+                "command": "leetcodeMaster.review.setWebDavPassword",
+                "title": "Set WebDAV Password",
+                "category": "LeetCode Master",
+                "icon": "$(key)"
             },
             {
                 "command": "leetcodeMaster.review.refreshToday",
@@ -820,18 +827,37 @@
                     "leetcodeMaster.review.sync.backend": {
                         "type": "string",
                         "default": "off",
-                        "scope": "application",
+                        "scope": "machine",
                         "enum": [
                             "off",
-                            "localFolder"
+                            "localFolder",
+                            "webdav"
                         ],
-                        "description": "Review data synchronization backend. Use localFolder with a cloud-synced directory such as Nutstore, OneDrive, Dropbox, or iCloud."
+                        "description": "Review data synchronization backend. Use localFolder with a cloud-synced directory or webdav with a WebDAV-compatible service."
                     },
                     "leetcodeMaster.review.sync.folder": {
                         "type": "string",
                         "default": "",
-                        "scope": "application",
+                        "scope": "machine",
                         "description": "Local folder used for review data synchronization when leetcodeMaster.review.sync.backend is localFolder."
+                    },
+                    "leetcodeMaster.review.sync.webdav.url": {
+                        "type": "string",
+                        "default": "https://dav.jianguoyun.com/dav/",
+                        "scope": "machine",
+                        "description": "WebDAV server URL used when leetcodeMaster.review.sync.backend is webdav."
+                    },
+                    "leetcodeMaster.review.sync.webdav.username": {
+                        "type": "string",
+                        "default": "",
+                        "scope": "machine",
+                        "description": "WebDAV account name used when leetcodeMaster.review.sync.backend is webdav."
+                    },
+                    "leetcodeMaster.review.sync.webdav.rootPath": {
+                        "type": "string",
+                        "default": "LeetCodeMaster",
+                        "scope": "machine",
+                        "description": "Remote WebDAV folder used for LeetCode Master review sync."
                     },
                     "leetcodeMaster.allowReportData": {
                         "type": "boolean",
@@ -846,6 +872,7 @@
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
+        "test:review-sync": "node scripts/test-review-sync.js",
         "watch": "tsc -watch -p ./",
         "lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
         "build": "npx @vscode/vsce package",

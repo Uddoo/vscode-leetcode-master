@@ -8,6 +8,7 @@ import * as path from "path";
 import * as requireFromString from "require-from-string";
 import { ExtensionContext } from "vscode";
 import { ConfigurationChangeEvent, Disposable, MessageItem, window, workspace, WorkspaceConfiguration } from "vscode";
+import { leetCodeChannel } from "./leetCodeChannel";
 import { Endpoint, extensionSettingsSection, getUrl, IProblem, leetcodeHasInited, legacyLeetcodeHasInited, supportedPlugins } from "./shared";
 import { executeCommand, executeCommandWithProgress } from "./utils/cpUtils";
 import { LcAxios } from "./utils/httpUtils";
@@ -227,7 +228,7 @@ class LeetCodeExecutor implements Disposable {
             const graphqlUrl: string = getUrl("graphql");
             const endpoint: string = workspace.getConfiguration(extensionSettingsSection).get<string>("endpoint", Endpoint.LeetCode);
             const isCn: boolean = endpoint === Endpoint.LeetCodeCN;
-            console.log(`[LeetCode Master] Fetching daily challenge from: ${graphqlUrl} (CN: ${isCn})`);
+            leetCodeChannel.appendLine(`[LeetCode Master] Fetching daily challenge from: ${graphqlUrl} (CN: ${isCn})`);
 
             // leetcode.com uses activeDailyCodingChallengeQuestion, leetcode.cn uses todayRecord (array)
             const query: string = isCn
@@ -250,7 +251,7 @@ class LeetCodeExecutor implements Disposable {
             }
 
             if (!dailyData?.question) {
-                console.log("[LeetCode Master] Daily challenge API returned no question data. Response keys:", Object.keys(responseData || {}));
+                leetCodeChannel.appendLine(`[LeetCode Master] Daily challenge API returned no question data. Response keys: ${Object.keys(responseData || {}).join(", ")}`);
                 return undefined;
             }
             const q = dailyData.question;
@@ -267,10 +268,10 @@ class LeetCodeExecutor implements Disposable {
                 isDaily: true,
             };
             this.dailyChallengeCache = { date: today, data: problem };
-            console.log(`[LeetCode Master] Daily challenge fetched: [${problem.id}] ${problem.name}`);
+            leetCodeChannel.appendLine(`[LeetCode Master] Daily challenge fetched: [${problem.id}] ${problem.name}`);
             return problem;
         } catch (e) {
-            console.error("[LeetCode Master] Failed to fetch daily challenge:", e);
+            leetCodeChannel.appendLine(`[LeetCode Master] Failed to fetch daily challenge: ${e && e.message ? e.message : e.toString()}`);
             return undefined;
         }
     }

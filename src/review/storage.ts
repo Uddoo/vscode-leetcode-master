@@ -91,13 +91,15 @@ class ReviewStorage {
         return record;
     }
 
-    public async syncNow(): Promise<void> {
+    public async syncNow(): Promise<boolean> {
+        const hasConfiguredExternalBackend: boolean = await reviewSync.hasConfiguredExternalBackend();
         const mergedRecords: ReviewRecordMap | undefined = await reviewSync.syncRecords(this.getRecordMap());
         if (!mergedRecords) {
-            return;
+            return !hasConfiguredExternalBackend;
         }
         await this.getState().update(ReviewRecordsKey, mergedRecords);
         this.reviewRecordChangedEmitter.fire();
+        return true;
     }
 
     public async replaceAll(records: ReviewRecord[]): Promise<void> {
@@ -206,9 +208,8 @@ class ReviewStorage {
 
 export const reviewStorage: ReviewStorage = new ReviewStorage();
 
-export function configureReviewRecordSync(context: vscode.ExtensionContext): void {
-    const syncBackend: string = vscode.workspace.getConfiguration("leetcodeMaster.review.sync").get<string>("backend", "off");
-    context.globalState.setKeysForSync(syncBackend === "localFolder" ? [] : ReviewRecordSyncKeys);
+export async function configureReviewRecordSync(context: vscode.ExtensionContext): Promise<void> {
+    context.globalState.setKeysForSync(await reviewSync.hasConfiguredExternalBackend() ? [] : ReviewRecordSyncKeys);
 }
 
 /**

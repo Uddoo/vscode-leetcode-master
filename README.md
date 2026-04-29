@@ -42,14 +42,21 @@ LeetCode Master uses the `leetcodeMaster.*` settings namespace so it can coexist
 | `leetcodeMaster.review.dailyGoal` | Daily target number shown in the Review List progress summary. It does not block extra reviews. | `5` |
 | `leetcodeMaster.review.desiredRetention` | Target recall probability used by the FSRS scheduler. Higher values create shorter intervals and more reviews. | `0.9` |
 | `leetcodeMaster.review.maximumIntervalDays` | Maximum FSRS review interval in days. | `36500` |
-| `leetcodeMaster.review.sync.backend` | Review data synchronization backend. Use `localFolder` with a cloud-synced directory such as Nutstore, OneDrive, Dropbox, or iCloud. | `off` |
+| `leetcodeMaster.review.sync.backend` | Review data synchronization backend. Use `localFolder` with a cloud-synced directory or `webdav` with a WebDAV-compatible service. | `off` |
 | `leetcodeMaster.review.sync.folder` | Local folder used for review data synchronization when `leetcodeMaster.review.sync.backend` is `localFolder`. | `""` |
+| `leetcodeMaster.review.sync.webdav.url` | WebDAV server URL used when `leetcodeMaster.review.sync.backend` is `webdav`. The default points to Jianguoyun. | `https://dav.jianguoyun.com/dav/` |
+| `leetcodeMaster.review.sync.webdav.username` | WebDAV account name. | `""` |
+| `leetcodeMaster.review.sync.webdav.rootPath` | Remote WebDAV folder for review sync files. | `LeetCodeMaster` |
 
 ## Review Sync
 
-LeetCode Master can synchronize review data through a local folder. Point `leetcodeMaster.review.sync.folder` to a directory managed by a third-party sync tool, such as Nutstore, OneDrive, Dropbox, or iCloud, then set `leetcodeMaster.review.sync.backend` to `localFolder`.
+LeetCode Master can synchronize review data through VS Code Settings Sync, a local folder, or WebDAV. VS Code Settings Sync is used automatically while no complete external backend is configured.
 
-The sync folder stores current FSRS card state in sharded JSON files under `cards/` and append-only review events under `logs/`. This keeps the daily review queue portable across devices while preserving review history for statistics and insights.
+For `localFolder`, point `leetcodeMaster.review.sync.folder` to a directory managed by a third-party sync tool, such as Nutstore, OneDrive, Dropbox, or iCloud, then set `leetcodeMaster.review.sync.backend` to `localFolder`.
+
+For `webdav`, set `leetcodeMaster.review.sync.backend` to `webdav`, configure the WebDAV URL, username, and root path, then run `LeetCode Master: Set WebDAV Password` to store the application password in VS Code SecretStorage. Jianguoyun works with `https://dav.jianguoyun.com/dav/`, your account, and a third-party application password. If Jianguoyun returns a server error while creating remote folders, create the `leetcodeMaster.review.sync.webdav.rootPath` folder and its `cards` and `logs` subfolders in Jianguoyun first, then retry sync.
+
+Both external sync backends store current FSRS card state in sharded JSON files under `cards/`, append-only review events under `logs/`, and a `manifest.json`. This keeps the daily review queue portable across devices while preserving review history for statistics and insights.
 
 ## Core Settings
 
@@ -67,9 +74,11 @@ The sync folder stores current FSRS card state in sharded JSON files under `card
 
 LeetCode Master communicates with the configured LeetCode endpoint to sign in, list problems, preview descriptions, run tests, and submit solutions.
 
-Review records are stored in VS Code `globalState`. The review data includes problem ID, title, tags, latest confidence rating, next review date, and review history. LeetCode Master marks only the review records key for VS Code Settings Sync, so your review progress can follow your VS Code account across devices when Settings Sync is enabled. The review assistant does not upload this review data to a custom backend.
+Review records are stored in VS Code `globalState`. The review data includes problem ID, title, tags, latest confidence rating, next review date, and review history. LeetCode Master marks only the review records key for VS Code Settings Sync while no complete external sync backend is configured. When `localFolder` or `webdav` is fully configured, review sync uses that backend instead.
 
 LeetCode sign-in cookies and user status are not marked for Settings Sync. Sign in separately on each device.
+
+WebDAV passwords are stored in VS Code SecretStorage on each device and are not written to `settings.json`.
 
 If you do not want anonymous product telemetry from the inherited LeetCode workflow, set `leetcodeMaster.allowReportData` to `false`.
 

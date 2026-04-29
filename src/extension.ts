@@ -21,6 +21,7 @@ import { leetCodeManager } from "./leetCodeManager";
 import { reviewListProvider } from "./review/reviewListProvider";
 import { reviewStatsProvider } from "./review/reviewStatsProvider";
 import { configureReviewRecordSync, reviewStorage } from "./review/storage";
+import { reviewSync } from "./review/sync";
 import { ITodayReviewTreeNode, todayReviewTreeDataProvider } from "./review/todayReviewTreeDataProvider";
 import { leetCodeStatusBarController } from "./statusbar/leetCodeStatusBarController";
 import { migrateLegacySettings } from "./utils/configurationMigration";
@@ -50,7 +51,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         leetCodeTreeDataProvider.initialize(context);
         await globalState.initialize(context);
         await reviewStorage.initialize(context);
-        configureReviewRecordSync(context);
+        await configureReviewRecordSync(context);
         reviewListProvider.initialize(context);
         reviewStatsProvider.initialize(context);
         todayReviewTreeDataProvider.initialize();
@@ -68,6 +69,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             markdownEngine,
             codeLensController,
             explorerNodeManager,
+            vscode.workspace.onDidChangeConfiguration(async (event: vscode.ConfigurationChangeEvent) => {
+                if (event.affectsConfiguration("leetcodeMaster.review.sync")) {
+                    await reviewSync.initialize(context);
+                    await configureReviewRecordSync(context);
+                }
+            }),
             vscode.window.registerFileDecorationProvider(leetCodeTreeItemDecorationProvider),
             vscode.window.createTreeView(extensionTreeViewId, { treeDataProvider: leetCodeTreeDataProvider, showCollapseAll: true }),
             vscode.window.createTreeView(extensionTodayReviewTreeViewId, { treeDataProvider: todayReviewTreeDataProvider }),
@@ -119,10 +126,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             vscode.commands.registerCommand("leetcodeMaster.review.showList", () => reviewListProvider.show()),
             vscode.commands.registerCommand("leetcodeMaster.review.showTodayDue", () => reviewListProvider.show("due")),
             vscode.commands.registerCommand("leetcodeMaster.review.syncNow", async () => {
-                await reviewStorage.syncNow();
+                const synchronized: boolean = await reviewStorage.syncNow();
                 todayReviewTreeDataProvider.refresh();
-                vscode.window.showInformationMessage("LeetCode Master review data synchronized.");
+                if (synchronized) {
+                    vscode.window.showInformationMessage("LeetCode Master review data synchronized.");
+                } else {
+                    vscode.window.showErrorMessage(`LeetCode Master review data sync failed. ${reviewSync.getLastError() || "Open the LeetCode output channel for details."}`);
+                }
             }),
+            vscode.commands.registerCommand("leetcodeMaster.review.setWebDavPassword", async () => setWebDavPassword(context)),
             vscode.commands.registerCommand("leetcodeMaster.review.refreshToday", () => todayReviewTreeDataProvider.refresh()),
             vscode.commands.registerCommand("leetcodeMaster.review.openTodayProblem", (node: ITodayReviewTreeNode) => todayReviewTreeDataProvider.openProblem(node)),
             vscode.commands.registerCommand("leetcodeMaster.review.showStats", () => reviewStatsProvider.show())
@@ -136,6 +148,31 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     } catch (error) {
         leetCodeChannel.appendLine(error.toString());
         promptForOpenOutputChannel("Extension initialization failed. Please open output channel for details.", DialogType.error);
+    }
+}
+
+async function setWebDavPassword(context: vscode.ExtensionContext): Promise<void> {
+    const password: string | undefined = await vscode.window.showInputBox({
+        ignoreFocusOut: true,
+        password: true,
+        placeHolder: "WebDAV application password",
+        prompt: "Enter the WebDAV application password for LeetCode Master review sync.",
+    });
+    if (password === undefined) {
+        return;
+    }
+    const normalizedPassword: string = password.trim();
+    if (!normalizedPassword) {
+        vscode.window.showWarningMessage("WebDAV password was not saved because it is empty.");
+        return;
+    }
+    await reviewSync.setWebDavPassword(normalizedPassword);
+    const initialized: boolean = await reviewSync.initialize(context);
+    await configureReviewRecordSync(context);
+    if (initialized) {
+        vscode.window.showInformationMessage("LeetCode Master WebDAV password saved and connection verified.");
+    } else {
+        vscode.window.showWarningMessage(`LeetCode Master WebDAV password saved, but connection verification failed. ${reviewSync.getLastError() || "Open the LeetCode output channel for details."}`);
     }
 }
 
